@@ -21,5 +21,10 @@
             <Font name="Microsoft YaHei Light" size="40.0" />
          </font>
       </Label>
+      <Button alignment="CENTER" layoutX="897.0" layoutY="14.0" mnemonicParsing="false" prefHeight="39.0" prefWidth="60.0" text="User">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Button>
    </children>
 </Pane>
