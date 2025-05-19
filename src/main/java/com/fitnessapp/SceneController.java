@@ -18,19 +18,19 @@ public class SceneController {
         String buttonId = source.getId(), scenePath = "";
         switch (buttonId) {
             case "homeButton":
-                scenePath = "Home.fxml";
+                scenePath = "/com/fitnessapp/Home.fxml";
                 break;
             case "workoutButton":
-                scenePath = "Workout.fxml";
+                scenePath = "/com/fitnessapp/Workout.fxml";
                 break;
             case "dietButton":
-                scenePath = "Diet.fxml";
+                scenePath = "/com/fitnessapp/Diet.fxml";
                 break;
             case "profileButton":
-                scenePath = "Profile.fxml";
+                scenePath = "/com/fitnessapp/Profile.fxml";
                 break;
             default:
-                scenePath = "Home.fxml";
+                scenePath = "/com/fitnessapp/Home.fxml";
                 break;
         }
         try {
