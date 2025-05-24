@@ -28,12 +28,15 @@ public class ShowHomeInfo {
         calendarView.getCalendarSources().add(calendarSource);
 
         // set the view of the calendar
-        calendarView.setShowAddCalendarButton(true);
-        calendarView.setShowPageToolBarControls(true);
-        calendarView.setShowPrintButton(true);
-        calendarView.setShowSearchField(true);
-        calendarView.setShowSearchResultsTray(true);
-        calendarView.setShowToolBar(true);
+        calendarView.setShowAddCalendarButton(false);
+        calendarView.setShowPageToolBarControls(false);
+        calendarView.setShowPrintButton(false);
+        calendarView.setShowSearchField(false);
+        calendarView.setShowSearchResultsTray(false);
+        calendarView.setShowToolBar(false);
+
+        // show week view only
+        calendarView.showWeekPage();
 
         // Add some sample entries
         addSampleWorkouts();

@@ -1,0 +1,53 @@
+/* Hide all views except week view */
+.calendar-view .day-page,
+.calendar-view .month-page,
+.calendar-view .year-page {
+    -fx-visibility: hidden;
+    -fx-display: none;
+}
+
+/* Show only week view */
+.calendar-view .week-page {
+    -fx-visibility: visible;
+    -fx-display: block;
+}
+
+/* Hide view switching controls */
+.calendar-view .tool-bar,
+.calendar-view .page-tool-bar {
+    -fx-visibility: hidden;
+    -fx-display: none;
+}
+
+/* Hide all toolbars and navigation */
+.calendar-view .tool-bar,
+.calendar-view .page-tool-bar,
+.calendar-view .add-calendar-button,
+.calendar-view .print-button,
+.calendar-view .search-field,
+.calendar-view .search-results-tray {
+    -fx-visibility: hidden;
+    -fx-max-height: 0;
+    -fx-padding: 0;
+    -fx-background-color: transparent;
+}
+
+/* Make week view take all available space */
+.calendar-view .week-page {
+    -fx-pref-width: 100%;
+    -fx-pref-height: 100%;
+}
+
+/* Style the week view */
+.calendar-view .week-page .week-day-header {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+.calendar-view .week-page .week-time-column {
+    -fx-pref-width: 60px;
+}
+
+.calendar-view .week-page .week-day-column {
+    -fx-pref-width: 120px;
+}

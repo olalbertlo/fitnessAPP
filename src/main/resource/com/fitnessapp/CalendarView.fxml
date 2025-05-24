@@ -4,4 +4,7 @@
 
 <VBox xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" 
       fx:controller="com.fitnessapp.ShowHomeInfo" prefHeight="374.0" prefWidth="847.0">
+      <stylesheets>
+            <URL value="@../../styles/calendar-style.css" />
+      </stylesheets>
 </VBox> 
