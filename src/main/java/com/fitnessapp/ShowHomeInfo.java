@@ -13,6 +13,9 @@ public class ShowHomeInfo {
     private Calendar workoutCalendar;
 
     public void initializeCalendar(VBox container) {
+        // clear the container
+        container.getChildren().clear();
+
         calendarView = new CalendarView();
 
         workoutCalendar = new Calendar("Workouts");

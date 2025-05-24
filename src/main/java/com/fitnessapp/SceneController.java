@@ -20,15 +20,20 @@ public class SceneController {
     private Stage stage;
     private Scene scene;
     private Parent root;
+    private String scenePath;
 
     @FXML
     public void initialize() {
-        showHomeInfo = new ShowHomeInfo();
+        if (calendarContainer != null) {
+            showHomeInfo = new ShowHomeInfo();
+            // initialize the calendar whenever the scene is loaded
+            showHomeInfo.initializeCalendar(calendarContainer);
+        }
     }
 
     public void switchSceneButton(ActionEvent event) {
         Node source = (Node) event.getSource();
-        String buttonId = source.getId(), scenePath = "";
+        String buttonId = source.getId();
         switch (buttonId) {
             case "homeButton":
                 scenePath = "/com/fitnessapp/Home.fxml";
