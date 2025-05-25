@@ -72,4 +72,9 @@ public class SceneController {
             e.printStackTrace();
         }
     }
+
+    public void showAlarm(ActionEvent event) {
+        ShowAlarmPage showAlarmPage = new ShowAlarmPage();
+        showAlarmPage.showAlarmPagePopup();
+    }
 }

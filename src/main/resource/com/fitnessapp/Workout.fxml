@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
 
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="677.0" prefWidth="971.0" stylesheets="@ProfileStyle.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.fitnessapp.SceneController">
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="677.0" prefWidth="971.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.fitnessapp.SceneController">
    <children>
       <AnchorPane prefHeight="677.0" prefWidth="55.0">
          <children>
@@ -158,5 +158,6 @@
             </GridPane>
          </children>
       </GridPane>
+      <Button alignment="CENTER" layoutX="20.0" layoutY="520.0" mnemonicParsing="false" onAction="#showAlarm" prefHeight="60.0" prefWidth="55.0" text="Alarm" />
    </children>
 </Pane>

@@ -10,7 +10,6 @@
 
 <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="677.0" prefWidth="971.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.fitnessapp.Login">
    <stylesheets>
-      <URL value="@ProfileStyle.css" />
       <URL value="@../../styles/styles.css" />
    </stylesheets>
    <children>
