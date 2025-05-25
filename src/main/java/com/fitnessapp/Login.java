@@ -19,6 +19,11 @@ public class Login {
     @FXML
     private PasswordField passwordField;
 
+    @FXML
+    public void onEnter(ActionEvent event) {
+        loginAction(event);
+    }
+
     public void loginAction(ActionEvent event) {
         // get username and password
         String password = passwordField.getText();
