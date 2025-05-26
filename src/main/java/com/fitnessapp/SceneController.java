@@ -9,6 +9,7 @@ import javafx.stage.Stage;
 import javafx.scene.Scene;
 import javafx.scene.Node;
 import java.io.IOException;
+import javafx.stage.Modality;
 
 public class SceneController {
 
@@ -16,7 +17,7 @@ public class SceneController {
     @FXML
     private VBox calendarContainer;
 
-    private ShowHomeInfo showHomeInfo;
+    private static ShowHomeInfo showHomeInfo;
     private Stage stage;
     private Scene scene;
     private Parent root;
@@ -76,5 +77,22 @@ public class SceneController {
     public void showAlarm(ActionEvent event) {
         ShowAlarmPage showAlarmPage = new ShowAlarmPage();
         showAlarmPage.showAlarmPagePopup();
+    }
+
+    public void showAddWorkoutPage(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/fitnessapp/AddWorkout.fxml"));
+            Parent root = loader.load();
+            AddWorkoutPage addWorkoutPage = loader.getController();
+            System.out.println("ShowHomeInfo: " + showHomeInfo);
+            addWorkoutPage.setShowHomeInfo(showHomeInfo);
+            Stage stage = new Stage();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setTitle("Add Workout");
+            stage.setScene(new Scene(root));
+            stage.showAndWait();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

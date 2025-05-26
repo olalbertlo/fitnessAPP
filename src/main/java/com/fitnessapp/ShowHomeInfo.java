@@ -21,7 +21,7 @@ public class ShowHomeInfo {
 
         calendarView = new CalendarView();
 
-        workoutCalendar = new Calendar("Workouts");
+        workoutCalendar = CalendarModel.getWorkoutCalendar();
         workoutCalendar.setStyle(Calendar.Style.STYLE1);
 
         // Calendar : calendar -> source -> view
@@ -41,11 +41,15 @@ public class ShowHomeInfo {
         calendarView.setShowSearchResultsTray(false);
         calendarView.setShowToolBar(false);
 
+        // Make calendar read-only
+        calendarView.setEntryDetailsPopOverContentCallback(param -> null);
+        calendarView.setContextMenuCallback(param -> null);
+        calendarView.setEntryFactory(param -> null);
+        calendarView.setEntryEditPolicy(param -> false);
+        calendarView.setEntryDetailsCallback(param -> null);
+
         // show week view only
         calendarView.showWeekPage();
-
-        // Add some sample entries
-        addSampleWorkouts();
 
         calendarView.setMaxHeight(Double.MAX_VALUE);
         calendarView.setMaxWidth(Double.MAX_VALUE);
@@ -58,38 +62,16 @@ public class ShowHomeInfo {
             Node weekHeader = findNodeByClass(calendarView, "com.calendarfx.view.WeekDayHeaderView");
             if (weekHeader != null) {
                 weekHeader.setMouseTransparent(true);
-                System.out.println(
-                        "Blocked mouse events on: " + weekHeader.getClass() + " " + weekHeader.getStyleClass());
-            } else {
-                System.out.println("WeekDayHeaderView not found!");
             }
         });
     }
 
-    private void addSampleWorkouts() {
-        // Monday - Morning Workout
-        Entry<String> mondayWorkout = new Entry<>("Morning Workout");
-        LocalDate monday = LocalDate.now().with(java.time.DayOfWeek.MONDAY);
-        mondayWorkout.setInterval(monday, LocalTime.of(7, 0), monday, LocalTime.of(8, 0));
-        workoutCalendar.addEntry(mondayWorkout);
-
-        // Wednesday - Cardio
-        Entry<String> wednesdayWorkout = new Entry<>("Cardio");
-        LocalDate wednesday = LocalDate.now().with(java.time.DayOfWeek.WEDNESDAY);
-        wednesdayWorkout.setInterval(wednesday, LocalTime.of(17, 0), wednesday, LocalTime.of(18, 0));
-        workoutCalendar.addEntry(wednesdayWorkout);
-
-        // Friday - HIIT
-        Entry<String> fridayWorkout = new Entry<>("HIIT");
-        LocalDate friday = LocalDate.now().with(java.time.DayOfWeek.FRIDAY);
-        fridayWorkout.setInterval(friday, LocalTime.of(17, 0), friday, LocalTime.of(18, 0));
-        workoutCalendar.addEntry(fridayWorkout);
-
-        // Saturday - Yoga
-        Entry<String> saturdayWorkout = new Entry<>("Yoga");
-        LocalDate saturday = LocalDate.now().with(java.time.DayOfWeek.SATURDAY);
-        saturdayWorkout.setInterval(saturday, LocalTime.of(10, 0), saturday, LocalTime.of(11, 0));
-        workoutCalendar.addEntry(saturdayWorkout);
+    public void addWorkoutToCalendar(String workoutName, String dayName, LocalTime startTime, LocalTime endTime) {
+        java.time.DayOfWeek dayOfWeek = java.time.DayOfWeek.valueOf(dayName);
+        LocalDate date = LocalDate.now().with(java.time.temporal.TemporalAdjusters.nextOrSame(dayOfWeek));
+        Entry<String> workout = new Entry<>(workoutName);
+        workout.setInterval(date, startTime, date, endTime);
+        workoutCalendar.addEntry(workout);
     }
 
     // Helper method to find a node by class name
