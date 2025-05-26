@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane fx:id="workoutPage" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="661.0" prefWidth="650.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.fitnessapp.AddWorkoutPage">
+   <children>
+      <CheckBox layoutX="43.0" layoutY="53.0" mnemonicParsing="false" text="Dumbell Press" />
+      <CheckBox layoutX="145.0" layoutY="53.0" mnemonicParsing="false" text="Barbell Press" />
+      <CheckBox layoutX="238.0" layoutY="53.0" mnemonicParsing="false" text="Incline Press" />
+      <CheckBox layoutX="329.0" layoutY="53.0" mnemonicParsing="false" text="Decline Press" />
+      <CheckBox layoutX="425.0" layoutY="53.0" mnemonicParsing="false" text="Fly" />
+      <CheckBox layoutX="463.0" layoutY="53.0" mnemonicParsing="false" text="Dip" />
+      <Label layoutX="14.0" layoutY="14.0" prefHeight="39.0" prefWidth="77.0" text="Chest">
+         <font>
+            <Font name="Impact" size="20.0" />
+         </font>
+      </Label>
+      <Label layoutX="14.0" layoutY="78.0" prefHeight="39.0" prefWidth="77.0" text="Back">
+         <font>
+            <Font name="Impact" size="20.0" />
+         </font>
+      </Label>
+      <Label layoutX="14.0" layoutY="160.0" prefHeight="39.0" prefWidth="77.0" text="Arm">
+         <font>
+            <Font name="Impact" size="20.0" />
+         </font>
+      </Label>
+      <Label layoutX="14.0" layoutY="353.0" prefHeight="39.0" prefWidth="77.0" text="Leg">
+         <font>
+            <Font name="Impact" size="20.0" />
+         </font>
+      </Label>
+      <Label layoutX="14.0" layoutY="272.0" prefHeight="39.0" prefWidth="77.0" text="Shoulder">
+         <font>
+            <Font name="Impact" size="20.0" />
+         </font>
+      </Label>
+      <Label layoutX="14.0" layoutY="436.0" prefHeight="39.0" prefWidth="77.0" text="Core">
+         <font>
+            <Font name="Impact" size="20.0" />
+         </font>
+      </Label>
+      <CheckBox layoutX="43.0" layoutY="117.0" mnemonicParsing="false" text="Barbell Bent-Over Row" />
+      <CheckBox layoutX="192.0" layoutY="117.0" mnemonicParsing="false" text="Dealift" />
+      <CheckBox layoutX="250.0" layoutY="117.0" mnemonicParsing="false" text="KettleBell Swing" />
+      <CheckBox layoutX="362.0" layoutY="117.0" mnemonicParsing="false" text="Pull Up" />
+      <CheckBox layoutX="424.0" layoutY="117.0" mnemonicParsing="false" text="Single-Arm Row" />
+      <CheckBox layoutX="538.0" layoutY="117.0" mnemonicParsing="false" text="Lat PullDowns" />
+      <CheckBox layoutX="43.0" layoutY="144.0" mnemonicParsing="false" text="Renegade Row" />
+      <CheckBox layoutX="150.0" layoutY="144.0" mnemonicParsing="false" text="Med Ball Wood Chop" />
+      <CheckBox layoutX="292.0" layoutY="144.0" mnemonicParsing="false" text="T-Bar Row" />
+      <CheckBox layoutX="371.0" layoutY="144.0" mnemonicParsing="false" text="Seated Row" />
+      <CheckBox layoutX="43.0" layoutY="199.0" mnemonicParsing="false" text="Barbell Bicep Curl" />
+      <CheckBox layoutX="163.0" layoutY="199.0" mnemonicParsing="false" text="Cable Bicep Curl" />
+      <CheckBox layoutX="277.0" layoutY="199.0" mnemonicParsing="false" text="Dumbbell Preacher Curl" />
+      <CheckBox layoutX="433.0" layoutY="199.0" mnemonicParsing="false" text="Skull Crusher" />
+      <CheckBox layoutX="529.0" layoutY="199.0" mnemonicParsing="false" text="Zottman Curls" />
+      <CheckBox layoutX="43.0" layoutY="227.0" mnemonicParsing="false" text="Overhead Tricep Extension" />
+      <CheckBox layoutX="215.0" layoutY="227.0" mnemonicParsing="false" text="Cable Triceps Pushdown" />
+      <CheckBox layoutX="371.0" layoutY="227.0" mnemonicParsing="false" text="Incline Bicep Curl" />
+      <CheckBox layoutX="490.0" layoutY="227.0" mnemonicParsing="false" text="Twisting Dumbbell Curl" />
+      <CheckBox layoutX="43.0" layoutY="256.0" mnemonicParsing="false" text="Close-Grip Bench Press" />
+      <CheckBox layoutX="195.0" layoutY="256.0" mnemonicParsing="false" text="Preacher Curl" />
+      <CheckBox layoutX="43.0" layoutY="310.0" mnemonicParsing="false" text="Military Press" />
+      <CheckBox layoutX="140.0" layoutY="310.0" mnemonicParsing="false" text="Seated Dumbell Press" />
+      <CheckBox layoutX="285.0" layoutY="310.0" mnemonicParsing="false" text="Seated Barbell Press" />
+      <CheckBox layoutX="421.0" layoutY="310.0" mnemonicParsing="false" text="Upright Row" />
+      <CheckBox layoutX="514.0" layoutY="310.0" mnemonicParsing="false" text="Rear Delt Fly" />
+      <CheckBox layoutX="43.0" layoutY="337.0" mnemonicParsing="false" text="Lateral Raise" />
+      <CheckBox layoutX="137.0" layoutY="337.0" mnemonicParsing="false" text="Front Raise" />
+      <CheckBox layoutX="222.0" layoutY="337.0" mnemonicParsing="false" text="Reverse Fly" />
+      <CheckBox layoutX="43.0" layoutY="471.0" mnemonicParsing="false" text="Landmine press" />
+      <CheckBox layoutX="307.0" layoutY="337.0" mnemonicParsing="false" text="Cable Face Pull" />
+      <CheckBox layoutX="43.0" layoutY="392.0" mnemonicParsing="false" text="Squat" />
+      <CheckBox layoutX="98.0" layoutY="392.0" mnemonicParsing="false" text="Deadlifts" />
+      <CheckBox layoutX="170.0" layoutY="392.0" mnemonicParsing="false" text="Leg Press" />
+      <CheckBox layoutX="245.0" layoutY="392.0" mnemonicParsing="false" text="Olympic Lifts" />
+      <CheckBox layoutX="340.0" layoutY="392.0" mnemonicParsing="false" text="Split Squat" />
+      <CheckBox layoutX="423.0" layoutY="392.0" mnemonicParsing="false" text="Hack Squat" />
+      <CheckBox layoutX="509.0" layoutY="392.0" mnemonicParsing="false" text="Lunge" />
+      <CheckBox layoutX="566.0" layoutY="392.0" mnemonicParsing="false" text="Leg Curl" />
+      <CheckBox layoutX="43.0" layoutY="420.0" mnemonicParsing="false" text="Hip Thrust" />
+      <CheckBox layoutX="124.0" layoutY="420.0" mnemonicParsing="false" text="Lying Hamstrings Curl" />
+      <CheckBox layoutX="153.0" layoutY="471.0" mnemonicParsing="false" text="Plank" />
+      <CheckBox layoutX="206.0" layoutY="471.0" mnemonicParsing="false" text="Dragon Fly" />
+      <CheckBox layoutX="290.0" layoutY="471.0" mnemonicParsing="false" text="Russian Twist" />
+      <CheckBox layoutX="388.0" layoutY="471.0" mnemonicParsing="false" text="Medicine Ball Slam" />
+      <CheckBox layoutX="515.0" layoutY="471.0" mnemonicParsing="false" text="Hanging Leg Raises" />
+      <CheckBox layoutX="43.0" layoutY="497.0" mnemonicParsing="false" text="Kneeling Landmine Rotations" />
+      <Button layoutX="291.0" layoutY="617.0" mnemonicParsing="false" onAction="#addWorkout" prefHeight="30.0" prefWidth="68.0" text="ADD">
+         <font>
+            <Font size="14.0" />
+         </font></Button>
+      <RadioButton layoutX="25.0" layoutY="528.0" mnemonicParsing="false" text="Monday">
+         <toggleGroup>
+            <ToggleGroup fx:id="weekDay" />
+         </toggleGroup>
+         <font>
+            <Font name="System Bold" size="12.0" />
+         </font>
+      </RadioButton>
+      <RadioButton layoutX="115.0" layoutY="528.0" mnemonicParsing="false" text="Tuesday" toggleGroup="$weekDay">
+         <font>
+            <Font name="System Bold" size="12.0" />
+         </font>
+      </RadioButton>
+      <RadioButton layoutX="205.0" layoutY="528.0" mnemonicParsing="false" text="Wednesday" toggleGroup="$weekDay">
+         <font>
+            <Font name="System Bold" size="12.0" />
+         </font>
+      </RadioButton>
+      <RadioButton layoutX="295.0" layoutY="528.0" mnemonicParsing="false" text="Thursday" toggleGroup="$weekDay">
+         <font>
+            <Font name="System Bold" size="12.0" />
+         </font>
+      </RadioButton>
+      <RadioButton layoutX="385.0" layoutY="528.0" mnemonicParsing="false" text="Friday" toggleGroup="$weekDay">
+         <font>
+            <Font name="System Bold" size="12.0" />
+         </font>
+      </RadioButton>
+      <RadioButton layoutX="475.0" layoutY="528.0" mnemonicParsing="false" text="Saturday" toggleGroup="$weekDay">
+         <font>
+            <Font name="System Bold" size="12.0" />
+         </font>
+      </RadioButton>
+      <RadioButton layoutX="565.0" layoutY="528.0" mnemonicParsing="false" text="Sunday" toggleGroup="$weekDay">
+         <font>
+            <Font name="System Bold" size="12.0" />
+         </font>
+      </RadioButton>
+      <Label alignment="CENTER" layoutX="164.0" layoutY="567.0" prefHeight="16.0" prefWidth="31.0" text="：">
+         <font>
+            <Font name="System Bold" size="16.0" />
+         </font>
+      </Label>
+      <Label alignment="CENTER" layoutX="297.0" layoutY="568.0" prefHeight="22.0" prefWidth="56.0" text="To" />
+      <Label alignment="CENTER" layoutX="446.0" layoutY="567.0" prefHeight="16.0" prefWidth="31.0" text="：">
+         <font>
+            <Font name="System Bold" size="16.0" />
+         </font>
+      </Label>
+      <ComboBox fx:id="fromHour" layoutX="108.0" layoutY="567.0" prefHeight="23.0" prefWidth="60.0" />
+      <ComboBox fx:id="fromMinute" layoutX="192.0" layoutY="567.0" prefHeight="23.0" prefWidth="60.0" />
+      <ComboBox fx:id="toHour" layoutX="390.0" layoutY="567.0" prefHeight="23.0" prefWidth="60.0" />
+      <ComboBox fx:id="toMinute" layoutX="474.0" layoutY="567.0" prefHeight="23.0" prefWidth="60.0" />
+   </children>
+</AnchorPane>
