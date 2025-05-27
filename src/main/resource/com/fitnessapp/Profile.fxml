@@ -12,7 +12,7 @@
 <?import javafx.scene.shape.Circle?>
 <?import javafx.scene.text.Font?>
 
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="677.0" prefWidth="971.0" stylesheets="@ProfileStyle.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.fitnessapp.SceneController">
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="677.0" prefWidth="971.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.fitnessapp.SceneController">
    <children>
       <AnchorPane prefHeight="677.0" prefWidth="55.0">
          <children>
@@ -20,6 +20,7 @@
             <Button id="workoutButton" layoutY="140.0" mnemonicParsing="false" onAction="#switchSceneButton" prefHeight="39.0" prefWidth="97.0" text="Workout" />
             <Button id="dietButton" layoutY="179.0" mnemonicParsing="false" onAction="#switchSceneButton" prefHeight="39.0" prefWidth="97.0" text="Diet" />
             <Button id="profileButton" layoutY="218.0" mnemonicParsing="false" onAction="#switchSceneButton" prefHeight="39.0" prefWidth="97.0" text="Profile" />
+            <Button alignment="CENTER" layoutX="20.0" layoutY="520.0" mnemonicParsing="false" onAction="#showAlarm" prefHeight="60.0" prefWidth="55.0" text="Alarm" />
          </children>
       </AnchorPane>
       <Label alignment="CENTER" prefHeight="85.0" prefWidth="207.0" text="Fitness">

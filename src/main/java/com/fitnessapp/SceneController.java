@@ -9,6 +9,7 @@ import javafx.stage.Stage;
 import javafx.scene.Scene;
 import javafx.scene.Node;
 import java.io.IOException;
+import javafx.stage.Modality;
 
 public class SceneController {
 
@@ -16,19 +17,24 @@ public class SceneController {
     @FXML
     private VBox calendarContainer;
 
-    private ShowHomeInfo showHomeInfo;
+    private static ShowHomeInfo showHomeInfo;
     private Stage stage;
     private Scene scene;
     private Parent root;
+    private String scenePath;
 
     @FXML
     public void initialize() {
-        showHomeInfo = new ShowHomeInfo();
+        if (calendarContainer != null) {
+            showHomeInfo = new ShowHomeInfo();
+            // initialize the calendar whenever the scene is loaded
+            showHomeInfo.initializeCalendar(calendarContainer);
+        }
     }
 
     public void switchSceneButton(ActionEvent event) {
         Node source = (Node) event.getSource();
-        String buttonId = source.getId(), scenePath = "";
+        String buttonId = source.getId();
         switch (buttonId) {
             case "homeButton":
                 scenePath = "/com/fitnessapp/Home.fxml";
@@ -64,6 +70,28 @@ public class SceneController {
             stage.setScene(scene);
             stage.show();
         } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void showAlarm(ActionEvent event) {
+        ShowAlarmPage showAlarmPage = new ShowAlarmPage();
+        showAlarmPage.showAlarmPagePopup();
+    }
+
+    public void showAddWorkoutPage(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/fitnessapp/AddWorkout.fxml"));
+            Parent root = loader.load();
+            AddWorkoutPage addWorkoutPage = loader.getController();
+            System.out.println("ShowHomeInfo: " + showHomeInfo);
+            addWorkoutPage.setShowHomeInfo(showHomeInfo);
+            Stage stage = new Stage();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setTitle("Add Workout");
+            stage.setScene(new Scene(root));
+            stage.showAndWait();
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
