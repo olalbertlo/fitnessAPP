@@ -16,13 +16,13 @@ import java.time.LocalTime;
 import javafx.scene.control.Alert;
 import java.util.stream.Collectors;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.Button;
 
 public class AddWorkoutPage {
 
     private ShowHomeInfo showHomeInfo;
 
     public void setShowHomeInfo(ShowHomeInfo showHomeInfo) {
-        System.out.println("ShowHomeInfo set: " + showHomeInfo);
         this.showHomeInfo = showHomeInfo;
     }
 
@@ -58,7 +58,6 @@ public class AddWorkoutPage {
     }
 
     public void addWorkout(ActionEvent event) {
-
         // get all selected checkboxes
         List<CheckBox> selectedCheckBoxes = workoutPage.getChildren().stream()
                 .filter(node -> node instanceof CheckBox).map(node -> (CheckBox) node).filter(CheckBox::isSelected)
@@ -69,7 +68,6 @@ public class AddWorkoutPage {
         minute2 = parseComboBoxValue(toMinute);
 
         // check if the user has selected at least 1 and at most 10 exercises and a day
-        // check if the weekDay is selected
         if (selectedCheckBoxes.size() < 1 || selectedCheckBoxes.size() > 10
                 || weekDay.getSelectedToggle() == null) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -82,6 +80,7 @@ public class AddWorkoutPage {
             alert.showAndWait();
             return;
         }
+
         // check if the time is valid
         if (hour > hour2 || (hour == hour2 && minute > minute2) || hour < 0 || hour > 23 || minute < 0
                 || minute > 59 || hour2 < 0 || hour2 > 23 || minute2 < 0 || minute2 > 59) {
@@ -92,14 +91,51 @@ public class AddWorkoutPage {
             alert.showAndWait();
             return;
         }
+
         // add the workout to the calendar
         LocalTime startTime = LocalTime.of(hour, minute);
         LocalTime endTime = LocalTime.of(hour2, minute2);
         RadioButton selectedDayButton = (RadioButton) weekDay.getSelectedToggle();
         String dayName = selectedDayButton.getText().toUpperCase();
         showHomeInfo.addWorkoutToCalendar("Sample Workout", dayName, startTime, endTime);
-        closePopupWindow();
 
+        // create button for the workout
+        Button workoutButton = new Button();
+        // Format button text
+        StringBuilder buttonText = new StringBuilder();
+        for (CheckBox checkBox : selectedCheckBoxes) {
+            buttonText.append(checkBox.getText()).append("\n");
+        }
+        buttonText.append(String.format("%02d:%02d - %02d:%02d", hour, minute, hour2, minute2));
+        workoutButton.setText(buttonText.toString());
+
+        // Style the button
+        workoutButton.setMaxWidth(Double.MAX_VALUE);
+        workoutButton.setStyle("-fx-background-color: #230850; -fx-text-fill: white; -fx-font-size: 12px;");
+
+        // Convert day name to index (MONDAY=0, TUESDAY=1, etc.)
+        int dayIndex = switch (dayName) {
+            case "MONDAY" -> 0;
+            case "TUESDAY" -> 1;
+            case "WEDNESDAY" -> 2;
+            case "THURSDAY" -> 3;
+            case "FRIDAY" -> 4;
+            case "SATURDAY" -> 5;
+            case "SUNDAY" -> 6;
+            default -> -1;
+        };
+
+        if (dayIndex != -1) {
+            // Store the button information
+            SceneController.storeWorkoutButton(dayName, buttonText.toString());
+
+            // Add the button to the grid
+            SceneController.weekGrid[dayIndex].add(workoutButton, 0, SceneController.weekGrid[dayIndex].getRowCount());
+            javafx.scene.layout.RowConstraints rowConstraints = new javafx.scene.layout.RowConstraints();
+            rowConstraints.setPrefHeight(60);
+            SceneController.weekGrid[dayIndex].getRowConstraints().add(rowConstraints);
+        }
+        closePopupWindow();
     }
 
     public void closePopupWindow() {
