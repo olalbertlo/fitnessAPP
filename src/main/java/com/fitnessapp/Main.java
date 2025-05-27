@@ -10,7 +10,7 @@ public class Main extends Application {
     @Override
     public void start(Stage stage) {
         try {
-            Parent root = FXMLLoader.load(getClass().getResource("/com/fitnessapp/Profile.fxml"));
+            Parent root = FXMLLoader.load(getClass().getResource("/com/fitnessapp/Login.fxml"));
             Scene scene = new Scene(root);
             stage.setScene(scene);
             stage.setTitle("Fitness APP");
