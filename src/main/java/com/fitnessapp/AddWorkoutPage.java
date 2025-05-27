@@ -17,6 +17,9 @@ import javafx.scene.control.Alert;
 import java.util.stream.Collectors;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Button;
+import java.time.LocalDate;
+import java.time.temporal.TemporalAdjusters;
+import com.calendarfx.model.Entry;
 
 public class AddWorkoutPage {
 
@@ -97,7 +100,13 @@ public class AddWorkoutPage {
         LocalTime endTime = LocalTime.of(hour2, minute2);
         RadioButton selectedDayButton = (RadioButton) weekDay.getSelectedToggle();
         String dayName = selectedDayButton.getText().toUpperCase();
-        showHomeInfo.addWorkoutToCalendar("Sample Workout", dayName, startTime, endTime);
+
+        // Create calendar entry
+        Entry<String> workoutEntry = new Entry<>("Sample Workout");
+        java.time.DayOfWeek dayOfWeek = java.time.DayOfWeek.valueOf(dayName);
+        LocalDate date = LocalDate.now().with(TemporalAdjusters.nextOrSame(dayOfWeek));
+        workoutEntry.setInterval(date, startTime, date, endTime);
+        showHomeInfo.addWorkoutToCalendar(workoutEntry);
 
         // create button for the workout
         Button workoutButton = new Button();
@@ -113,6 +122,28 @@ public class AddWorkoutPage {
         workoutButton.setMaxWidth(Double.MAX_VALUE);
         workoutButton.setStyle("-fx-background-color: #230850; -fx-text-fill: white; -fx-font-size: 12px;");
 
+        // Add click handler to delete the button and calendar entry
+        workoutButton.setOnAction(clickEvent -> {
+            // Remove from calendar
+            CalendarModel.getWorkoutCalendar().removeEntry(workoutEntry);
+            // Remove from grid
+            int dayIndex = switch (dayName) {
+                case "MONDAY" -> 0;
+                case "TUESDAY" -> 1;
+                case "WEDNESDAY" -> 2;
+                case "THURSDAY" -> 3;
+                case "FRIDAY" -> 4;
+                case "SATURDAY" -> 5;
+                case "SUNDAY" -> 6;
+                default -> -1;
+            };
+            if (dayIndex != -1 && SceneController.weekGrid[dayIndex] != null) {
+                SceneController.weekGrid[dayIndex].getChildren().remove(workoutButton);
+            }
+            // Remove from stored list
+            SceneController.removeWorkoutButton(workoutButton);
+        });
+
         // Convert day name to index (MONDAY=0, TUESDAY=1, etc.)
         int dayIndex = switch (dayName) {
             case "MONDAY" -> 0;
@@ -126,8 +157,8 @@ public class AddWorkoutPage {
         };
 
         if (dayIndex != -1) {
-            // Store the button information
-            SceneController.storeWorkoutButton(dayName, buttonText.toString());
+            // Store the button information with calendar entry
+            SceneController.storeWorkoutButton(dayName, buttonText.toString(), workoutEntry, workoutButton);
 
             // Add the button to the grid
             SceneController.weekGrid[dayIndex].add(workoutButton, 0, SceneController.weekGrid[dayIndex].getRowCount());

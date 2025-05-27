@@ -66,6 +66,11 @@ public class ShowHomeInfo {
         });
     }
 
+    public void addWorkoutToCalendar(Entry<String> workout) {
+        workoutCalendar.addEntry(workout);
+    }
+
+    // Keep the old method for backward compatibility
     public void addWorkoutToCalendar(String workoutName, String dayName, LocalTime startTime, LocalTime endTime) {
         java.time.DayOfWeek dayOfWeek = java.time.DayOfWeek.valueOf(dayName);
         LocalDate date = LocalDate.now().with(java.time.temporal.TemporalAdjusters.nextOrSame(dayOfWeek));

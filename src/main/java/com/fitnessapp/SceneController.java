@@ -13,6 +13,7 @@ import javafx.stage.Modality;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.scene.control.Button;
+import com.calendarfx.model.Entry;
 
 public class SceneController {
 
@@ -54,11 +55,14 @@ public class SceneController {
     private static class WorkoutButton {
         String day;
         String text;
+        Entry<String> calendarEntry; // Store the calendar entry
+        Button button; // Store the actual button
 
-        WorkoutButton(String day, String text) {
+        WorkoutButton(String day, String text, Entry<String> calendarEntry, Button button) {
             this.day = day;
             this.text = text;
-
+            this.calendarEntry = calendarEntry;
+            this.button = button;
         }
     }
 
@@ -181,14 +185,19 @@ public class SceneController {
     }
 
     // store a workout button
-    public static void storeWorkoutButton(String day, String text) {
-        storedWorkoutButtons.add(new WorkoutButton(day, text));
+    public static void storeWorkoutButton(String day, String text, Entry<String> calendarEntry, Button button) {
+        storedWorkoutButtons.add(new WorkoutButton(day, text, calendarEntry, button));
+    }
+
+    // remove a workout button
+    public static void removeWorkoutButton(Button button) {
+        storedWorkoutButtons.removeIf(wb -> wb.button == button);
     }
 
     // restore all workout buttons
     private void restoreWorkoutButtons() {
         for (WorkoutButton wb : storedWorkoutButtons) {
-            Button button = new Button(wb.text);
+            Button button = wb.button;
             button.setMaxWidth(Double.MAX_VALUE);
             button.setStyle("-fx-background-color: #230850; -fx-text-fill: white; -fx-font-size: 12px;");
 
@@ -203,7 +212,6 @@ public class SceneController {
                 default -> -1;
             };
 
-            // add the button to the grid
             if (dayIndex != -1 && weekGrid[dayIndex] != null) {
                 weekGrid[dayIndex].add(button, 0, weekGrid[dayIndex].getRowCount());
                 javafx.scene.layout.RowConstraints rowConstraints = new javafx.scene.layout.RowConstraints();
