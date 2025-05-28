@@ -1,10 +1,6 @@
 package com.fitnessapp;
 
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.event.ActionEvent;
 import javafx.scene.layout.AnchorPane;
@@ -104,7 +100,15 @@ public class AddWorkoutPage {
         // Create calendar entry
         Entry<String> workoutEntry = new Entry<>("Sample Workout");
         java.time.DayOfWeek dayOfWeek = java.time.DayOfWeek.valueOf(dayName);
-        LocalDate date = LocalDate.now().with(TemporalAdjusters.nextOrSame(dayOfWeek));
+        java.time.DayOfWeek today = LocalDate.now().getDayOfWeek();
+        LocalDate date;
+        if (dayOfWeek.getValue() < today.getValue()) {
+            // If the selected day is before today, use previousOrSame
+            date = LocalDate.now().with(TemporalAdjusters.previousOrSame(dayOfWeek));
+        } else {
+            // Otherwise, use nextOrSame
+            date = LocalDate.now().with(TemporalAdjusters.nextOrSame(dayOfWeek));
+        }
         workoutEntry.setInterval(date, startTime, date, endTime);
         showHomeInfo.addWorkoutToCalendar(workoutEntry);
 
@@ -122,28 +126,6 @@ public class AddWorkoutPage {
         workoutButton.setMaxWidth(Double.MAX_VALUE);
         workoutButton.setStyle("-fx-background-color: #230850; -fx-text-fill: white; -fx-font-size: 12px;");
 
-        // Add click handler to delete the button and calendar entry
-        workoutButton.setOnAction(clickEvent -> {
-            // Remove from calendar
-            CalendarModel.getWorkoutCalendar().removeEntry(workoutEntry);
-            // Remove from grid
-            int dayIndex = switch (dayName) {
-                case "MONDAY" -> 0;
-                case "TUESDAY" -> 1;
-                case "WEDNESDAY" -> 2;
-                case "THURSDAY" -> 3;
-                case "FRIDAY" -> 4;
-                case "SATURDAY" -> 5;
-                case "SUNDAY" -> 6;
-                default -> -1;
-            };
-            if (dayIndex != -1 && SceneController.weekGrid[dayIndex] != null) {
-                SceneController.weekGrid[dayIndex].getChildren().remove(workoutButton);
-            }
-            // Remove from stored list
-            SceneController.removeWorkoutButton(workoutButton);
-        });
-
         // Convert day name to index (MONDAY=0, TUESDAY=1, etc.)
         int dayIndex = switch (dayName) {
             case "MONDAY" -> 0;
@@ -155,6 +137,18 @@ public class AddWorkoutPage {
             case "SUNDAY" -> 6;
             default -> -1;
         };
+        // Add click handler to delete the button and calendar entry
+        workoutButton.setOnAction(clickEvent -> {
+            // Remove from calendar
+            CalendarModel.getWorkoutCalendar().removeEntry(workoutEntry);
+            // Remove from grid
+
+            if (dayIndex != -1 && SceneController.weekGrid[dayIndex] != null) {
+                SceneController.weekGrid[dayIndex].getChildren().remove(workoutButton);
+            }
+            // Remove from stored list
+            SceneController.removeWorkoutButton(workoutButton);
+        });
 
         if (dayIndex != -1) {
             // Store the button information with calendar entry
