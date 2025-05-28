@@ -51,6 +51,10 @@ public class ShowHomeInfo {
         // show week view only
         calendarView.showWeekPage();
 
+        // Set the first day of the week to Monday using WeekFields
+        java.time.temporal.WeekFields weekFields = java.time.temporal.WeekFields.of(java.time.DayOfWeek.MONDAY, 1);
+        calendarView.setWeekFields(weekFields);
+
         calendarView.setMaxHeight(Double.MAX_VALUE);
         calendarView.setMaxWidth(Double.MAX_VALUE);
         VBox.setVgrow(calendarView, Priority.ALWAYS);
@@ -66,6 +70,11 @@ public class ShowHomeInfo {
         });
     }
 
+    public void addWorkoutToCalendar(Entry<String> workout) {
+        workoutCalendar.addEntry(workout);
+    }
+
+    // Keep the old method for backward compatibility
     public void addWorkoutToCalendar(String workoutName, String dayName, LocalTime startTime, LocalTime endTime) {
         java.time.DayOfWeek dayOfWeek = java.time.DayOfWeek.valueOf(dayName);
         LocalDate date = LocalDate.now().with(java.time.temporal.TemporalAdjusters.nextOrSame(dayOfWeek));
