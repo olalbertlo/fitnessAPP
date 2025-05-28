@@ -101,13 +101,13 @@
             </AnchorPane>
           <AnchorPane fx:id="weekPane" minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
                <children>
-                  <CheckBox fx:id="Monday" layoutX="12.0" layoutY="10.0" mnemonicParsing="false" text="Mon" />
-                  <CheckBox fx:id="Tuesday" layoutX="74.0" layoutY="10.0" mnemonicParsing="false" text="Tue" />
-                  <CheckBox fx:id="Wednesday" layoutX="131.0" layoutY="10.0" mnemonicParsing="false" text="Wed" />
-                  <CheckBox fx:id="Thursday" layoutX="193.0" layoutY="10.0" mnemonicParsing="false" text="Thu" />
-                  <CheckBox fx:id="Friday" layoutX="250.0" layoutY="10.0" mnemonicParsing="false" text="Fri" />
-                  <CheckBox fx:id="Saturday" layoutX="299.0" layoutY="10.0" mnemonicParsing="false" text="Sat" />
-                  <CheckBox fx:id="Sunday" layoutX="353.0" layoutY="10.0" mnemonicParsing="false" text="Sun" />
+                  <CheckBox fx:id="Mon" layoutX="12.0" layoutY="10.0" mnemonicParsing="false" text="Mon" />
+                  <CheckBox fx:id="Tue" layoutX="74.0" layoutY="10.0" mnemonicParsing="false" text="Tue" />
+                  <CheckBox fx:id="Wed" layoutX="131.0" layoutY="10.0" mnemonicParsing="false" text="Wed" />
+                  <CheckBox fx:id="Thu" layoutX="193.0" layoutY="10.0" mnemonicParsing="false" text="Thu" />
+                  <CheckBox fx:id="Fri" layoutX="250.0" layoutY="10.0" mnemonicParsing="false" text="Fri" />
+                  <CheckBox fx:id="Sat" layoutX="299.0" layoutY="10.0" mnemonicParsing="false" text="Sat" />
+                  <CheckBox fx:id="Sun" layoutX="353.0" layoutY="10.0" mnemonicParsing="false" text="Sun" />
                </children>
             </AnchorPane>
         </items>
