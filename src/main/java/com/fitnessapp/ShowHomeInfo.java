@@ -51,6 +51,10 @@ public class ShowHomeInfo {
         // show week view only
         calendarView.showWeekPage();
 
+        // Set the first day of the week to Monday using WeekFields
+        java.time.temporal.WeekFields weekFields = java.time.temporal.WeekFields.of(java.time.DayOfWeek.MONDAY, 1);
+        calendarView.setWeekFields(weekFields);
+
         calendarView.setMaxHeight(Double.MAX_VALUE);
         calendarView.setMaxWidth(Double.MAX_VALUE);
         VBox.setVgrow(calendarView, Priority.ALWAYS);

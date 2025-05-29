@@ -13,6 +13,9 @@ import javafx.stage.Modality;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.scene.control.Button;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.control.TextArea;
 import com.calendarfx.model.Entry;
 
 public class SceneController {
@@ -68,6 +71,34 @@ public class SceneController {
 
     private static List<WorkoutButton> storedWorkoutButtons = new ArrayList<>();
 
+    // Static storage for diet buttons
+    private static class DietButton {
+        int day;
+        int meal;
+        String text;
+        Button button;
+
+        DietButton(int day, int meal, String text, Button button) {
+            this.day = day;
+            this.meal = meal;
+            this.text = text;
+            this.button = button;
+        }
+    }
+
+    private static List<DietButton> storedDietButtons = new ArrayList<>();
+
+    @FXML
+    private AnchorPane mealPane;
+    @FXML
+    private AnchorPane weekPane;
+    @FXML
+    private TextArea eat;
+    @FXML
+    private GridPane weekDay;
+
+    private AddDiet addDiet;
+
     @FXML
     public void initialize() {
         // Store this instance
@@ -76,6 +107,14 @@ public class SceneController {
         if (calendarContainer != null) {
             showHomeInfo = new ShowHomeInfo();
             showHomeInfo.initializeCalendar(calendarContainer);
+        }
+
+        // Initialize AddDiet after FXML components are loaded
+        addDiet = new AddDiet(mealPane, weekPane, eat, weekDay);
+
+        // Restore diet buttons if we're on the Diet page
+        if (weekDay != null) {
+            restoreDietButtons();
         }
 
         // Check if all grids are available
@@ -218,6 +257,62 @@ public class SceneController {
                 rowConstraints.setPrefHeight(60);
                 weekGrid[dayIndex].getRowConstraints().add(rowConstraints);
             }
+        }
+    }
+
+    // store a diet button
+    public static void storeDietButton(int day, int meal, String text, Button button) {
+        storedDietButtons.add(new DietButton(day, meal, text, button));
+    }
+
+    // remove a diet button
+    public static void removeDietButton(Button button) {
+        storedDietButtons.removeIf(db -> db.button == button);
+    }
+
+    // restore all diet buttons
+    private void restoreDietButtons() {
+        if (weekDay != null) {
+            // Clear existing buttons from the grid
+            weekDay.getChildren().removeIf(node -> node instanceof Button);
+
+            for (DietButton db : storedDietButtons) {
+                Button button = new Button(db.text);
+                button.setMaxWidth(weekDay.getColumnConstraints().get(db.day).getPrefWidth());
+                button.setMaxHeight(weekDay.getRowConstraints().get(db.meal + 1).getPrefHeight() - 5);
+
+                if (db.day % 2 == 0) {
+                    button.setStyle(
+                            "-fx-alignment: center; -fx-background-color:rgb(26, 155, 187); -fx-text-fill: white;");
+                } else {
+                    button.setStyle(
+                            "-fx-alignment: center; -fx-background-color:rgb(21, 165, 153); -fx-text-fill: white;");
+                }
+
+                // Set up removal action
+                button.setOnAction(e -> {
+                    Button clickedButton = (Button) e.getSource();
+                    weekDay.getChildren().remove(clickedButton);
+                    removeDietButton(clickedButton);
+                });
+
+                weekDay.add(button, db.day, db.meal + 1);
+                GridPane.setFillWidth(button, true);
+                GridPane.setFillHeight(button, true);
+                GridPane.setHalignment(button, javafx.geometry.HPos.CENTER);
+                GridPane.setValignment(button, javafx.geometry.VPos.CENTER);
+
+                // Update the stored button reference
+                db.button = button;
+            }
+        }
+    }
+
+    // add diet to the pane
+    public void addDiet(ActionEvent event) {
+        if (addDiet != null) {
+            addDiet.initialize();
+            addDiet.createMealButtons();
         }
     }
 }
