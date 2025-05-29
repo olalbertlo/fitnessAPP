@@ -13,6 +13,11 @@ import java.io.IOException;
 import javafx.scene.control.Alert;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Hyperlink;
+import com.fitnessapp.database.DatabaseConnection;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class Login {
 
@@ -32,9 +37,37 @@ public class Login {
 
     public void loginAction(ActionEvent event) {
         // get username and password
+        Connection conn = DatabaseConnection.getConnection();
+        boolean isLogin = false;
+
         String password = passwordField.getText();
         String account = accountField.getText();
-        if (account.equals("admin") && password.equals("admin")) {
+        String sql = "SELECT * FROM users WHERE username = ? AND userPassword = ?";
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, account);
+            pstmt.setString(2, password);
+
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                isLogin = true;
+
+                // Update last login timestamp
+                String updateSql = "UPDATE users SET last_login = CURRENT_TIMESTAMP WHERE username = ?";
+                try (PreparedStatement updateStmt = conn.prepareStatement(updateSql)) {
+                    updateStmt.setString(1, account);
+                    updateStmt.executeUpdate();
+                }
+            } else {
+                isLogin = false;
+            }
+        } catch (SQLException e) {
+            isLogin = false;
+            System.err.println("Database error during login: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        if (isLogin) {
             // switch to home page
             try {
                 // load the home page

@@ -73,7 +73,7 @@ public class CreateUserPage {
 
         try {
             String sql = """
-                    INSERT INTO users (username, password, display_name, height, weight, age,
+                    INSERT INTO users (username, userPassword, display_name, height, weight, age,
                     gender, fitness_target, exercise_frequency, meal_preference)
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                     """;
