@@ -81,8 +81,22 @@ public class DatabaseConnection {
                         )
                     """;
 
+            // Create alarms table
+            String createAlarmsTable = """
+                        CREATE TABLE IF NOT EXISTS alarms (
+                            id INT AUTO_INCREMENT PRIMARY KEY,
+                            user_id INT NOT NULL,
+                            hour INT NOT NULL,
+                            minute INT NOT NULL,
+                            task VARCHAR(50) NOT NULL,
+                            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                            FOREIGN KEY (user_id) REFERENCES users(id)
+                        )
+                    """;
+
             // Execute the create table statements
             connection.createStatement().execute(createUsersTable);
+            connection.createStatement().execute(createAlarmsTable);
 
             System.out.println("Database tables initialized successfully!");
         } catch (SQLException e) {

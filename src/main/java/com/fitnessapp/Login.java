@@ -39,10 +39,13 @@ public class Login {
         // get username and password
         Connection conn = DatabaseConnection.getConnection();
         boolean isLogin = false;
+        int userId = -1;
 
         String password = passwordField.getText();
         String account = accountField.getText();
-        String sql = "SELECT * FROM users WHERE username = ? AND userPassword = ?";
+
+        // get the id
+        String sql = "SELECT id FROM users WHERE username = ? AND userPassword = ?";
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, account);
             pstmt.setString(2, password);
@@ -51,11 +54,12 @@ public class Login {
 
             if (rs.next()) {
                 isLogin = true;
+                userId = rs.getInt("id");
 
                 // Update last login timestamp
-                String updateSql = "UPDATE users SET last_login = CURRENT_TIMESTAMP WHERE username = ?";
+                String updateSql = "UPDATE users SET last_login = CURRENT_TIMESTAMP WHERE id = ?";
                 try (PreparedStatement updateStmt = conn.prepareStatement(updateSql)) {
-                    updateStmt.setString(1, account);
+                    updateStmt.setInt(1, userId);
                     updateStmt.executeUpdate();
                 }
             } else {
@@ -67,11 +71,17 @@ public class Login {
             e.printStackTrace();
         }
 
-        if (isLogin) {
+        if (isLogin && userId > 0) {
             // switch to home page
             try {
                 // load the home page
-                Parent root = FXMLLoader.load(getClass().getResource("/com/fitnessapp/Home.fxml"));
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/fitnessapp/Home.fxml"));
+                Parent root = loader.load();
+
+                SceneController controller = loader.getController();
+                // Get the controller and set the user ID
+                controller.setCurrentUserId(userId);
+
                 Scene scene = new Scene(root);
                 Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
                 stage.setScene(scene);

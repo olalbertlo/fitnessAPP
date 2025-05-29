@@ -99,6 +99,8 @@ public class SceneController {
 
     private AddDiet addDiet;
 
+    private int currentUserId;
+
     @FXML
     public void initialize() {
         // Store this instance
@@ -184,11 +186,17 @@ public class SceneController {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(scenePath));
             root = loader.load();
 
+            // Pass the user ID to the new controller
+            SceneController newController = loader.getController();
+            if (newController != null) {
+                newController.setCurrentUserId(currentUserId);
+                System.out.println("Passing user ID to new scene: " + currentUserId); // Debug print
+            }
+
             // If loading the home scene, initialize the calendar
             if (scenePath.equals("/com/fitnessapp/Home.fxml")) {
-                SceneController controller = loader.getController();
-                if (controller != null && controller.calendarContainer != null) {
-                    controller.showHomeInfo.initializeCalendar(controller.calendarContainer);
+                if (newController != null && newController.calendarContainer != null) {
+                    newController.showHomeInfo.initializeCalendar(newController.calendarContainer);
                 }
             }
 
@@ -201,9 +209,33 @@ public class SceneController {
         }
     }
 
+    public void setCurrentUserId(int userId) {
+        this.currentUserId = userId;
+        System.out.println("SceneController received user ID: " + userId); // Debug print
+    }
+
     public void showAlarm(ActionEvent event) {
-        ShowAlarmPage showAlarmPage = new ShowAlarmPage();
-        showAlarmPage.showAlarmPagePopup();
+        if (currentUserId <= 0) {
+            System.err.println("No valid user ID found: " + currentUserId);
+            return;
+        }
+
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/fitnessapp/Alarm.fxml"));
+            Parent root = loader.load();
+
+            ShowAlarmPage showAlarmPage = loader.getController();
+            showAlarmPage.setCurrentUserId(currentUserId);
+            System.out.println("Passing user ID to alarm page: " + currentUserId); // Debug print
+
+            Stage stage = new Stage();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setTitle("Alarm");
+            stage.setScene(new Scene(root));
+            stage.showAndWait();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void showAddWorkoutPage(ActionEvent event) {
