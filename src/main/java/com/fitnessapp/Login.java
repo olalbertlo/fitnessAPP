@@ -11,6 +11,8 @@ import javafx.stage.Stage;
 import javafx.scene.Node;
 import java.io.IOException;
 import javafx.scene.control.Alert;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.Hyperlink;
 
 public class Login {
 
@@ -18,6 +20,10 @@ public class Login {
     private TextField accountField;
     @FXML
     private PasswordField passwordField;
+    @FXML
+    private CheckBox rememberMe;
+    @FXML
+    private Hyperlink createUser;
 
     @FXML
     public void onEnter(ActionEvent event) {
@@ -46,6 +52,19 @@ public class Login {
             alert.setTitle("Login Failed");
             alert.setContentText("Account or password incorrect");
             alert.showAndWait();
+        }
+    }
+
+    public void switchToCreateUser(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/fitnessapp/CreateUser.fxml"));
+            Parent root = loader.load();
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            Scene scene = new Scene(root);
+            stage.setScene(scene);
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.layout.AnchorPane?>
+
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="677.0" prefWidth="971.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.fitnessapp.CreateUserPage">
+   <children>
+      <TextField fx:id="userId" layoutX="214.0" layoutY="82.0" />
+      <PasswordField fx:id="userPassword" layoutX="214.0" layoutY="123.0" />
+      <PasswordField fx:id="confirmPassword" layoutX="214.0" layoutY="169.0" />
+      <RadioButton layoutX="704.0" layoutY="225.0" mnemonicParsing="false" text="Male">
+         <toggleGroup>
+            <ToggleGroup fx:id="Gender" />
+         </toggleGroup>
+      </RadioButton>
+      <RadioButton layoutX="801.0" layoutY="225.0" mnemonicParsing="false" text="Female" toggleGroup="$Gender" />
+      <TextField fx:id="Height" layoutX="704.0" layoutY="78.0" promptText="( cm )" />
+      <TextField fx:id="Weight" layoutX="704.0" layoutY="130.0" promptText="( kg )" />
+      <TextField fx:id="age" layoutX="704.0" layoutY="176.0" />
+      <Label alignment="CENTER_RIGHT" contentDisplay="CENTER" layoutX="79.0" layoutY="82.0" prefHeight="23.0" prefWidth="135.0" text="Account Name* : " />
+      <Label alignment="CENTER_RIGHT" contentDisplay="CENTER" layoutX="79.0" layoutY="123.0" prefHeight="23.0" prefWidth="135.0" text="Password* : " />
+      <Label alignment="CENTER_RIGHT" contentDisplay="CENTER" layoutX="79.0" layoutY="169.0" prefHeight="23.0" prefWidth="135.0" text="Confirm Password* : " />
+      <Label alignment="CENTER_RIGHT" contentDisplay="CENTER" layoutX="569.0" layoutY="78.0" prefHeight="23.0" prefWidth="135.0" text="Height : " />
+      <Label alignment="CENTER_RIGHT" contentDisplay="CENTER" layoutX="569.0" layoutY="130.0" prefHeight="23.0" prefWidth="135.0" text="Weight : " />
+      <Label alignment="CENTER_RIGHT" contentDisplay="CENTER" layoutX="569.0" layoutY="176.0" prefHeight="23.0" prefWidth="135.0" text="Age : " />
+      <Button layoutX="181.0" layoutY="289.0" mnemonicParsing="false" onAction="#createUser" prefHeight="69.0" prefWidth="113.0" text="Create" />
+      <ChoiceBox id="target" fx:id="target" layoutX="713.0" layoutY="262.0" prefWidth="150.0" />
+      <TextField fx:id="frequency" layoutX="689.0" layoutY="323.0" prefHeight="23.0" prefWidth="174.0" promptText="Exercise frequency per week" />
+      <TextArea fx:id="mealPreference" layoutX="551.0" layoutY="373.0" prefHeight="200.0" prefWidth="312.0" />
+      <TextField fx:id="userName" layoutX="214.0" layoutY="214.0" />
+      <Label alignment="CENTER_RIGHT" contentDisplay="CENTER" layoutX="79.0" layoutY="214.0" prefHeight="23.0" prefWidth="135.0" text="User Name* : " />
+   </children>
+</AnchorPane>

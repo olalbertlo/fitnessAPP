@@ -10,15 +10,13 @@ import com.fitnessapp.database.DatabaseConnection;
 public class User {
     private int id;
     private String username;
-    private String email;
     private Timestamp createdAt;
     private Timestamp lastLogin;
 
     // Constructor
-    public User(int id, String username, String email, Timestamp createdAt, Timestamp lastLogin) {
+    public User(int id, String username, Timestamp createdAt, Timestamp lastLogin) {
         this.id = id;
         this.username = username;
-        this.email = email;
         this.createdAt = createdAt;
         this.lastLogin = lastLogin;
     }
@@ -30,10 +28,6 @@ public class User {
 
     public String getUsername() {
         return username;
-    }
-
-    public String getEmail() {
-        return email;
     }
 
     public Timestamp getCreatedAt() {
@@ -87,7 +81,6 @@ public class User {
                     return new User(
                             rs.getInt("id"),
                             rs.getString("username"),
-                            rs.getString("email"),
                             rs.getTimestamp("created_at"),
                             rs.getTimestamp("last_login"));
                 }
@@ -112,21 +105,6 @@ public class User {
                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setString(1, username);
-            try (ResultSet rs = pstmt.executeQuery()) {
-                if (rs.next()) {
-                    return rs.getInt(1) > 0;
-                }
-            }
-        }
-        return false;
-    }
-
-    public static boolean isEmailTaken(String email) throws SQLException {
-        String sql = "SELECT COUNT(*) FROM users WHERE email = ?";
-        try (Connection conn = DatabaseConnection.getConnection();
-                PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            pstmt.setString(1, email);
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
                     return rs.getInt(1) > 0;
