@@ -8,8 +8,9 @@
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
-
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="677.0" prefWidth="971.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.fitnessapp.CreateUserPage">
    <children>
@@ -31,11 +32,20 @@
       <Label alignment="CENTER_RIGHT" contentDisplay="CENTER" layoutX="569.0" layoutY="78.0" prefHeight="23.0" prefWidth="135.0" text="Height : " />
       <Label alignment="CENTER_RIGHT" contentDisplay="CENTER" layoutX="569.0" layoutY="130.0" prefHeight="23.0" prefWidth="135.0" text="Weight : " />
       <Label alignment="CENTER_RIGHT" contentDisplay="CENTER" layoutX="569.0" layoutY="176.0" prefHeight="23.0" prefWidth="135.0" text="Age : " />
-      <Button layoutX="181.0" layoutY="289.0" mnemonicParsing="false" onAction="#createUser" prefHeight="69.0" prefWidth="113.0" text="Create" />
+      <Button layoutX="181.0" layoutY="512.0" mnemonicParsing="false" onAction="#createUser" prefHeight="69.0" prefWidth="113.0" text="Create" />
       <ChoiceBox id="target" fx:id="target" layoutX="713.0" layoutY="262.0" prefWidth="150.0" />
       <TextField fx:id="frequency" layoutX="689.0" layoutY="323.0" prefHeight="23.0" prefWidth="174.0" promptText="Exercise frequency per week" />
       <TextArea fx:id="mealPreference" layoutX="551.0" layoutY="373.0" prefHeight="200.0" prefWidth="312.0" />
       <TextField fx:id="userName" layoutX="214.0" layoutY="214.0" />
       <Label alignment="CENTER_RIGHT" contentDisplay="CENTER" layoutX="79.0" layoutY="214.0" prefHeight="23.0" prefWidth="135.0" text="User Name* : " />
+      <Button fx:id="imageChooser" layoutX="155.0" layoutY="294.0" mnemonicParsing="false" onAction="#selectImage" prefHeight="150.0" prefWidth="150.0">
+         <graphic>
+            <ImageView fx:id="userImage" fitHeight="150.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../../../../../add-symbol.png" />
+               </image>
+            </ImageView>
+         </graphic>
+      </Button>
    </children>
 </AnchorPane>

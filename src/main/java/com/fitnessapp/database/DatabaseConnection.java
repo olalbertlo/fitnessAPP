@@ -3,6 +3,8 @@ package com.fitnessapp.database;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 
 public class DatabaseConnection {
     // Database credentials
@@ -45,6 +47,21 @@ public class DatabaseConnection {
         return connection;
     }
 
+    public static boolean userExists(String userId) {
+        Connection conn = DatabaseConnection.getConnection();
+        try {
+            String sql = "SELECT COUNT(*) FROM users WHERE username = ?";
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, userId);
+            ResultSet rs = pstmt.executeQuery();
+            rs.next();
+            return rs.getInt(1) > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     // Close database connection
     public static void closeConnection() {
         if (connection != null) {
@@ -76,6 +93,7 @@ public class DatabaseConnection {
                             fitness_target VARCHAR(50),
                             exercise_frequency INT,
                             meal_preference TEXT,
+                            profile_image MEDIUMBLOB,
                             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                             last_login TIMESTAMP NULL
                         )

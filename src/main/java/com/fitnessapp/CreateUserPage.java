@@ -18,6 +18,13 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import com.fitnessapp.database.DatabaseConnection;
+import javafx.scene.image.ImageView;
+import javafx.stage.FileChooser;
+import java.io.File;
+import javafx.scene.image.Image;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.sql.ResultSet;
 
 public class CreateUserPage {
 
@@ -43,6 +50,10 @@ public class CreateUserPage {
     private TextField frequency;
     @FXML
     private TextArea mealPreference;
+    @FXML
+    private ImageView userImage;
+
+    private File selectedImageFile = null;
 
     @FXML
     public void initialize() {
@@ -66,6 +77,12 @@ public class CreateUserPage {
             return;
         }
 
+        // Check if the user already exists
+        if (DatabaseConnection.userExists(userId.getText())) {
+            showAlert("ERROE", "User already exists", "Use another account name");
+            return;
+        }
+
         if (!userPassword.getText().equals(confirmPassword.getText())) {
             showAlert("錯誤", "密碼不匹配", "請確保密碼和確認密碼相同。");
             return;
@@ -74,8 +91,8 @@ public class CreateUserPage {
         try {
             String sql = """
                     INSERT INTO users (username, userPassword, display_name, height, weight, age,
-                    gender, fitness_target, exercise_frequency, meal_preference)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    gender, fitness_target, exercise_frequency, meal_preference, profile_image)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                     """;
 
             Connection conn = DatabaseConnection.getConnection();
@@ -92,7 +109,7 @@ public class CreateUserPage {
             Integer frequencyValue = !frequency.getText().isEmpty() ? Integer.parseInt(frequency.getText()) : null;
 
             pstmt.setString(1, userId.getText());
-            pstmt.setString(2, userPassword.getText()); // Note: In production, you should hash the password
+            pstmt.setString(2, userPassword.getText());
             pstmt.setString(3, userName.getText());
             pstmt.setObject(4, HeightValue);
             pstmt.setObject(5, WeightValue);
@@ -102,12 +119,19 @@ public class CreateUserPage {
             pstmt.setObject(9, frequencyValue);
             pstmt.setString(10, mealPreference.getText());
 
-            pstmt.executeUpdate();
+            // Store the image file in the database
+            if (selectedImageFile != null) {
+                FileInputStream fis = new FileInputStream(selectedImageFile);
+                pstmt.setBinaryStream(11, fis, selectedImageFile.length());
+            } else {
+                pstmt.setNull(11, java.sql.Types.BLOB);
+            }
 
+            pstmt.executeUpdate();
             showAlert("成功", "用戶創建成功", "您的帳戶已成功創建！");
             switchToLogin(event);
 
-        } catch (SQLException e) {
+        } catch (SQLException | IOException e) {
             showAlert("錯誤", "數據庫錯誤", "創建用戶時發生錯誤: " + e.getMessage());
             e.printStackTrace();
         }
@@ -131,6 +155,18 @@ public class CreateUserPage {
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    public void selectImage() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Choose Profile Image");
+        fileChooser.getExtensionFilters()
+                .addAll(new FileChooser.ExtensionFilter("Image Files", "*.jpg", "*.png", "*.jpeg", "*.gif"));
+        File selectedFile = fileChooser.showOpenDialog(null);
+        if (selectedFile != null) {
+            selectedImageFile = selectedFile;
+            userImage.setImage(new Image(selectedFile.toURI().toString()));
         }
     }
 }
