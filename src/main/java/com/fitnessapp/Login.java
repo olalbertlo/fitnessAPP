@@ -72,15 +72,23 @@ public class Login {
         }
 
         if (isLogin && userId > 0) {
-            // switch to home page
             try {
-                // load the home page
+                // Load the home page first
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/fitnessapp/Home.fxml"));
                 Parent root = loader.load();
 
+                // Get the controller and set up ShowHomeInfo
                 SceneController controller = loader.getController();
-                // Get the controller and set the user ID
                 controller.setCurrentUserId(userId);
+
+                // Create and set up ShowHomeInfo
+                ShowHomeInfo showHomeInfo = new ShowHomeInfo();
+                showHomeInfo.initializeCalendar(controller.getCalendarContainer());
+
+                // Load all user data with ShowHomeInfo
+                LoadTheDataBase dataLoader = new LoadTheDataBase(userId);
+                dataLoader.setShowHomeInfo(showHomeInfo);
+                dataLoader.loadAllData();
 
                 Scene scene = new Scene(root);
                 Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();

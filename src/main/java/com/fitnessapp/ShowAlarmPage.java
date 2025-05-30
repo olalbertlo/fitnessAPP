@@ -53,6 +53,7 @@ public class ShowAlarmPage {
     public void setCurrentUserId(int userId) {
         this.currentUserId = userId;
         // Reload alarms when user ID is set
+        // alarms are loaded when the user login (whenever the userId is set)
         loadAlarms();
     }
 

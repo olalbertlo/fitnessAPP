@@ -24,6 +24,10 @@ public class SceneController {
     @FXML
     private VBox calendarContainer;
 
+    public VBox getCalendarContainer() {
+        return calendarContainer;
+    }
+
     @FXML
     private javafx.scene.layout.GridPane Monday;
     @FXML
