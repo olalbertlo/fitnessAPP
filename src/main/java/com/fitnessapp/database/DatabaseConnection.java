@@ -110,10 +110,24 @@ public class DatabaseConnection {
                         )
                     """;
 
+            // Create diets table
+            String createDietsTable = """
+                        CREATE TABLE IF NOT EXISTS diets (
+                            id INT AUTO_INCREMENT PRIMARY KEY,
+                            user_id INT NOT NULL,
+                            day_index INT NOT NULL,
+                            meal_index INT NOT NULL,
+                            meal_text TEXT NOT NULL,
+                            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                            FOREIGN KEY (user_id) REFERENCES users(id)
+                        )
+                    """;
+
             // Execute the create table statements
             connection.createStatement().execute(createUsersTable);
             connection.createStatement().execute(createAlarmsTable);
             connection.createStatement().execute(createWorkoutsTable);
+            connection.createStatement().execute(createDietsTable);
 
             System.out.println("Database tables initialized successfully!");
         } catch (SQLException e) {

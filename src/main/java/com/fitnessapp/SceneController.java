@@ -211,7 +211,9 @@ public class SceneController {
 
     public void setCurrentUserId(int userId) {
         this.currentUserId = userId;
-        System.out.println("SceneController received user ID: " + userId); // Debug print
+        if (addDiet != null) {
+            addDiet.setCurrentUserId(userId);
+        }
     }
 
     public void showAlarm(ActionEvent event) {
@@ -322,11 +324,18 @@ public class SceneController {
                             "-fx-alignment: center; -fx-background-color:rgb(21, 165, 153); -fx-text-fill: white;");
                 }
 
-                // Set up removal action
+                final int dayIndex = db.day;
+                final int mealIndex = db.meal;
+
+                // Set up removal action with proper user ID
                 button.setOnAction(e -> {
                     Button clickedButton = (Button) e.getSource();
                     weekDay.getChildren().remove(clickedButton);
                     removeDietButton(clickedButton);
+                    // Call deleteDietFromDatabase through addDiet instance
+                    if (addDiet != null) {
+                        addDiet.deleteDietFromDatabase(dayIndex, mealIndex);
+                    }
                 });
 
                 weekDay.add(button, db.day, db.meal + 1);
@@ -345,6 +354,7 @@ public class SceneController {
     public void addDiet(ActionEvent event) {
         if (addDiet != null) {
             addDiet.initialize();
+            addDiet.setCurrentUserId(currentUserId);
             addDiet.createMealButtons();
         }
     }
