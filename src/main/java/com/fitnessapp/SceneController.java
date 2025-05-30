@@ -243,6 +243,7 @@ public class SceneController {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/fitnessapp/AddWorkout.fxml"));
             Parent root = loader.load();
             AddWorkoutPage addWorkoutPage = loader.getController();
+            addWorkoutPage.setCurrentUserId(currentUserId);
             addWorkoutPage.setShowHomeInfo(showHomeInfo);
             Stage stage = new Stage();
             stage.initOwner(((Node) event.getSource()).getScene().getWindow());

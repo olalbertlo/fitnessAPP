@@ -16,13 +16,23 @@ import javafx.scene.control.Button;
 import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
 import com.calendarfx.model.Entry;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import com.fitnessapp.database.DatabaseConnection;
 
 public class AddWorkoutPage {
 
     private ShowHomeInfo showHomeInfo;
+    private int currentUserId;
 
     public void setShowHomeInfo(ShowHomeInfo showHomeInfo) {
         this.showHomeInfo = showHomeInfo;
+    }
+
+    public void setCurrentUserId(int userId) {
+        this.currentUserId = userId;
     }
 
     @FXML
@@ -91,75 +101,121 @@ public class AddWorkoutPage {
             return;
         }
 
-        // add the workout to the calendar
-        LocalTime startTime = LocalTime.of(hour, minute);
-        LocalTime endTime = LocalTime.of(hour2, minute2);
+        // Format workout text
+        StringBuilder workoutText = new StringBuilder();
+        for (CheckBox checkBox : selectedCheckBoxes) {
+            workoutText.append(checkBox.getText()).append("\n");
+        }
+
         RadioButton selectedDayButton = (RadioButton) weekDay.getSelectedToggle();
         String dayName = selectedDayButton.getText().toUpperCase();
 
-        // Create calendar entry
-        Entry<String> workoutEntry = new Entry<>("Sample Workout");
-        java.time.DayOfWeek dayOfWeek = java.time.DayOfWeek.valueOf(dayName);
-        java.time.DayOfWeek today = LocalDate.now().getDayOfWeek();
-        LocalDate date;
-        if (dayOfWeek.getValue() < today.getValue()) {
-            // If the selected day is before today, use previousOrSame
-            date = LocalDate.now().with(TemporalAdjusters.previousOrSame(dayOfWeek));
-        } else {
-            // Otherwise, use nextOrSame
-            date = LocalDate.now().with(TemporalAdjusters.nextOrSame(dayOfWeek));
-        }
-        workoutEntry.setInterval(date, startTime, date, endTime);
-        showHomeInfo.addWorkoutToCalendar(workoutEntry);
+        try {
+            // Save to database
+            Connection conn = DatabaseConnection.getConnection();
+            String sql = "INSERT INTO workouts (user_id, day_of_week, workout_text, start_hour, start_minute, end_hour, end_minute) VALUES (?, ?, ?, ?, ?, ?, ?)";
+            PreparedStatement pstmt = conn.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
+            pstmt.setInt(1, currentUserId);
+            pstmt.setString(2, dayName);
+            pstmt.setString(3, workoutText.toString());
+            pstmt.setInt(4, hour);
+            pstmt.setInt(5, minute);
+            pstmt.setInt(6, hour2);
+            pstmt.setInt(7, minute2);
+            pstmt.executeUpdate();
 
-        // create button for the workout
-        Button workoutButton = new Button();
-        // Format button text
-        StringBuilder buttonText = new StringBuilder();
-        for (CheckBox checkBox : selectedCheckBoxes) {
-            buttonText.append(checkBox.getText()).append("\n");
-        }
-        buttonText.append(String.format("%02d:%02d - %02d:%02d", hour, minute, hour2, minute2));
-        workoutButton.setText(buttonText.toString());
+            // Get the generated workout ID
+            ResultSet rs = pstmt.getGeneratedKeys();
+            if (rs.next()) {
+                int workoutId = rs.getInt(1);
 
-        // Style the button
-        workoutButton.setMaxWidth(Double.MAX_VALUE);
-        workoutButton.setStyle("-fx-background-color: #230850; -fx-text-fill: white; -fx-font-size: 12px;");
+                // add the workout to the calendar
+                LocalTime startTime = LocalTime.of(hour, minute);
+                LocalTime endTime = LocalTime.of(hour2, minute2);
 
-        // Convert day name to index (MONDAY=0, TUESDAY=1, etc.)
-        int dayIndex = switch (dayName) {
-            case "MONDAY" -> 0;
-            case "TUESDAY" -> 1;
-            case "WEDNESDAY" -> 2;
-            case "THURSDAY" -> 3;
-            case "FRIDAY" -> 4;
-            case "SATURDAY" -> 5;
-            case "SUNDAY" -> 6;
-            default -> -1;
-        };
-        // Add click handler to delete the button and calendar entry
-        workoutButton.setOnAction(clickEvent -> {
-            // Remove from calendar
-            CalendarModel.getWorkoutCalendar().removeEntry(workoutEntry);
-            // Remove from grid
+                // Create calendar entry
+                Entry<String> workoutEntry = new Entry<>("Workout");
+                java.time.DayOfWeek dayOfWeek = java.time.DayOfWeek.valueOf(dayName);
+                java.time.DayOfWeek today = LocalDate.now().getDayOfWeek();
+                LocalDate date;
+                if (dayOfWeek.getValue() < today.getValue()) {
+                    date = LocalDate.now().with(TemporalAdjusters.previousOrSame(dayOfWeek));
+                } else {
+                    date = LocalDate.now().with(TemporalAdjusters.nextOrSame(dayOfWeek));
+                }
+                workoutEntry.setInterval(date, startTime, date, endTime);
+                showHomeInfo.addWorkoutToCalendar(workoutEntry);
 
-            if (dayIndex != -1 && SceneController.weekGrid[dayIndex] != null) {
-                SceneController.weekGrid[dayIndex].getChildren().remove(workoutButton);
+                // create button for the workout
+                Button workoutButton = new Button();
+                // Format button text
+                StringBuilder buttonText = new StringBuilder();
+                buttonText.append(workoutText);
+                buttonText.append(String.format("%02d:%02d - %02d:%02d", hour, minute, hour2, minute2));
+                workoutButton.setText(buttonText.toString());
+
+                // Style the button
+                workoutButton.setMaxWidth(Double.MAX_VALUE);
+                workoutButton.setStyle("-fx-background-color: #230850; -fx-text-fill: white; -fx-font-size: 12px;");
+
+                // Convert day name to index
+                int dayIndex = switch (dayName) {
+                    case "MONDAY" -> 0;
+                    case "TUESDAY" -> 1;
+                    case "WEDNESDAY" -> 2;
+                    case "THURSDAY" -> 3;
+                    case "FRIDAY" -> 4;
+                    case "SATURDAY" -> 5;
+                    case "SUNDAY" -> 6;
+                    default -> -1;
+                };
+
+                // Add click handler to delete the button and calendar entry
+                workoutButton.setOnAction(clickEvent -> {
+                    try {
+                        // Remove from database
+                        String deleteSql = "DELETE FROM workouts WHERE id = ? AND user_id = ?";
+                        PreparedStatement deleteStmt = conn.prepareStatement(deleteSql);
+                        deleteStmt.setInt(1, workoutId);
+                        deleteStmt.setInt(2, currentUserId);
+                        deleteStmt.executeUpdate();
+
+                        // Remove from calendar
+                        CalendarModel.getWorkoutCalendar().removeEntry(workoutEntry);
+
+                        // Remove from grid
+                        if (dayIndex != -1 && SceneController.weekGrid[dayIndex] != null) {
+                            SceneController.weekGrid[dayIndex].getChildren().remove(workoutButton);
+                        }
+                        // Remove from stored list
+                        SceneController.removeWorkoutButton(workoutButton);
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                });
+
+                if (dayIndex != -1) {
+                    // Store the button information with calendar entry
+                    SceneController.storeWorkoutButton(dayName, buttonText.toString(), workoutEntry, workoutButton);
+
+                    // Add the button to the grid
+                    SceneController.weekGrid[dayIndex].add(workoutButton, 0,
+                            SceneController.weekGrid[dayIndex].getRowCount());
+                    javafx.scene.layout.RowConstraints rowConstraints = new javafx.scene.layout.RowConstraints();
+                    rowConstraints.setPrefHeight(60);
+                    SceneController.weekGrid[dayIndex].getRowConstraints().add(rowConstraints);
+                }
             }
-            // Remove from stored list
-            SceneController.removeWorkoutButton(workoutButton);
-        });
-
-        if (dayIndex != -1) {
-            // Store the button information with calendar entry
-            SceneController.storeWorkoutButton(dayName, buttonText.toString(), workoutEntry, workoutButton);
-
-            // Add the button to the grid
-            SceneController.weekGrid[dayIndex].add(workoutButton, 0, SceneController.weekGrid[dayIndex].getRowCount());
-            javafx.scene.layout.RowConstraints rowConstraints = new javafx.scene.layout.RowConstraints();
-            rowConstraints.setPrefHeight(60);
-            SceneController.weekGrid[dayIndex].getRowConstraints().add(rowConstraints);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("Database Error");
+            alert.setContentText("Failed to save workout to database");
+            alert.showAndWait();
+            return;
         }
+
         closePopupWindow();
     }
 

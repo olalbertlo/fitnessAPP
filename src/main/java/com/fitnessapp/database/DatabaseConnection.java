@@ -94,9 +94,26 @@ public class DatabaseConnection {
                         )
                     """;
 
+            // Create workouts table
+            String createWorkoutsTable = """
+                        CREATE TABLE IF NOT EXISTS workouts (
+                            id INT AUTO_INCREMENT PRIMARY KEY,
+                            user_id INT NOT NULL,
+                            day_of_week VARCHAR(20) NOT NULL,
+                            workout_text TEXT NOT NULL,
+                            start_hour INT NOT NULL,
+                            start_minute INT NOT NULL,
+                            end_hour INT NOT NULL,
+                            end_minute INT NOT NULL,
+                            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                            FOREIGN KEY (user_id) REFERENCES users(id)
+                        )
+                    """;
+
             // Execute the create table statements
             connection.createStatement().execute(createUsersTable);
             connection.createStatement().execute(createAlarmsTable);
+            connection.createStatement().execute(createWorkoutsTable);
 
             System.out.println("Database tables initialized successfully!");
         } catch (SQLException e) {
