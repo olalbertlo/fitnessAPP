@@ -124,6 +124,8 @@ public class SceneController {
     private Label userBMI;
     @FXML
     private Label userTarget;
+    @FXML
+    private Label adviceFromGemini;
 
     private LoadProfile loadProfile;
 
@@ -140,7 +142,8 @@ public class SceneController {
 
         // Initialize profile if we're on the profile page
         if (userImage != null && userDisplayName != null) {
-            loadProfile = new LoadProfile(userImage, userDisplayName, userStatus, userBMI, userTarget);
+            loadProfile = new LoadProfile(userImage, userDisplayName, userStatus, userBMI, userTarget,
+                    adviceFromGemini);
         }
 
         // Restore diet buttons if we're on the Diet page
@@ -505,14 +508,43 @@ public class SceneController {
                     insertDoneStmt.setString(3, completedWorkouts.toString());
                     insertDoneStmt.executeUpdate();
 
-                    // Update the original workout with remaining exercises
+                    // Find the workout button for today
+                    int todayIndex = switch (today) {
+                        case "MONDAY" -> 0;
+                        case "TUESDAY" -> 1;
+                        case "WEDNESDAY" -> 2;
+                        case "THURSDAY" -> 3;
+                        case "FRIDAY" -> 4;
+                        case "SATURDAY" -> 5;
+                        case "SUNDAY" -> 6;
+                        default -> -1;
+                    };
+
+                    // Update or remove the workout button
                     if (remainingWorkouts.length() > 0) {
+                        // Update the original workout with remaining exercises
                         String updateWorkoutSql = "UPDATE workouts SET workout_text = ? WHERE id = ? AND user_id = ?";
                         PreparedStatement updateWorkoutStmt = conn.prepareStatement(updateWorkoutSql);
                         updateWorkoutStmt.setString(1, remainingWorkouts.toString());
                         updateWorkoutStmt.setInt(2, workoutId);
                         updateWorkoutStmt.setInt(3, currentUserId);
                         updateWorkoutStmt.executeUpdate();
+
+                        // Update the button text if it exists
+                        if (todayIndex != -1 && weekGrid[todayIndex] != null) {
+                            for (WorkoutButton wb : storedWorkoutButtons) {
+                                if (wb.day.equals(today)) {
+                                    // Update the button text with remaining workouts
+                                    String[] buttonParts = wb.button.getText().split("\\d{2}:\\d{2}-\\d{2}:\\d{2}");
+                                    if (buttonParts.length > 0) {
+                                        String timeStr = wb.button.getText().substring(buttonParts[0].length());
+                                        wb.button.setText(remainingWorkouts.toString() + timeStr);
+                                        wb.text = remainingWorkouts.toString();
+                                    }
+                                    break;
+                                }
+                            }
+                        }
                     } else {
                         // If all workouts are completed, delete the workout
                         String deleteWorkoutSql = "DELETE FROM workouts WHERE id = ? AND user_id = ?";
@@ -520,11 +552,50 @@ public class SceneController {
                         deleteWorkoutStmt.setInt(1, workoutId);
                         deleteWorkoutStmt.setInt(2, currentUserId);
                         deleteWorkoutStmt.executeUpdate();
+
+                        // Remove the button and calendar entry if it exists
+                        if (todayIndex != -1 && weekGrid[todayIndex] != null) {
+                            for (WorkoutButton wb : new ArrayList<>(storedWorkoutButtons)) {
+                                if (wb.day.equals(today)) {
+                                    // Remove from calendar
+                                    CalendarModel.getWorkoutCalendar().removeEntry(wb.calendarEntry);
+                                    // Remove from grid
+                                    weekGrid[todayIndex].getChildren().remove(wb.button);
+                                    // Remove from stored list
+                                    storedWorkoutButtons.remove(wb);
+                                    break;
+                                }
+                            }
+                        }
                     }
 
-                    // Refresh the display
+                    // Refresh the daily tasks display
                     loadHomePageData();
+
+                    // Show success message
+                    javafx.scene.control.Alert alert = new javafx.scene.control.Alert(
+                            javafx.scene.control.Alert.AlertType.INFORMATION);
+                    alert.setTitle("Success");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Workout status updated successfully!");
+                    alert.showAndWait();
+                } else {
+                    // Show message if no workouts were selected
+                    javafx.scene.control.Alert alert = new javafx.scene.control.Alert(
+                            javafx.scene.control.Alert.AlertType.INFORMATION);
+                    alert.setTitle("Information");
+                    alert.setHeaderText(null);
+                    alert.setContentText("No workouts were marked as completed.");
+                    alert.showAndWait();
                 }
+            } else {
+                // Show message if no workouts found for today
+                javafx.scene.control.Alert alert = new javafx.scene.control.Alert(
+                        javafx.scene.control.Alert.AlertType.INFORMATION);
+                alert.setTitle("Information");
+                alert.setHeaderText(null);
+                alert.setContentText("No workouts found for today.");
+                alert.showAndWait();
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -532,7 +603,7 @@ public class SceneController {
                     javafx.scene.control.Alert.AlertType.ERROR);
             alert.setTitle("Error");
             alert.setHeaderText("Database Error");
-            alert.setContentText("Failed to update workout status");
+            alert.setContentText("Failed to update workout status: " + e.getMessage());
             alert.showAndWait();
         }
     }

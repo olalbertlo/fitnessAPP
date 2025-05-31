@@ -17,13 +17,16 @@ public class LoadProfile {
     private Label userStatus;
     private Label userBMI;
     private Label userTarget;
+    private Label adviceFromGemini;
 
-    public LoadProfile(ImageView userImage, Label userDisplayName, Label userStatus, Label userBMI, Label userTarget) {
+    public LoadProfile(ImageView userImage, Label userDisplayName, Label userStatus, Label userBMI, Label userTarget,
+            Label adviceFromGemini) {
         this.userImage = userImage;
         this.userDisplayName = userDisplayName;
         this.userStatus = userStatus;
         this.userBMI = userBMI;
         this.userTarget = userTarget;
+        this.adviceFromGemini = adviceFromGemini;
     }
 
     public void setCurrentUserId(int userId) {
@@ -36,6 +39,9 @@ public class LoadProfile {
             userStatus.setText("Error: No user ID provided");
             return;
         }
+
+        geminiConclude advice = new geminiConclude(adviceFromGemini, currentUserId);
+        advice.generateAdvice();
 
         Connection conn = DatabaseConnection.getConnection();
         String sql = "SELECT display_name, height, weight, age, gender, profile_image, fitness_target FROM users WHERE id = ?";
@@ -79,7 +85,7 @@ public class LoadProfile {
                     userImage.setFitHeight(149); // Set height limit
                 }
                 // Load fitness target
-                String fitnessTarget = rs.getString("fitness_target");
+                String fitnessTarget = "Target: " + rs.getString("fitness_target");
                 userTarget.setText(fitnessTarget);
             }
         } catch (SQLException e) {

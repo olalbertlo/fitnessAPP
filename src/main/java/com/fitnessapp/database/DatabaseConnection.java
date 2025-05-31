@@ -157,11 +157,10 @@ public class DatabaseConnection {
                         CREATE TABLE IF NOT EXISTS done_workouts (
                             id INT AUTO_INCREMENT PRIMARY KEY,
                             user_id INT NOT NULL,
-                            workout_id INT NOT NULL,
+                            workout_id INT,
                             workout_text TEXT NOT NULL,
                             completed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                            FOREIGN KEY (user_id) REFERENCES users(id),
-                            FOREIGN KEY (workout_id) REFERENCES workouts(id) ON DELETE CASCADE
+                            FOREIGN KEY (user_id) REFERENCES users(id)
                         )
                     """;
 

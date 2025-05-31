@@ -1,1 +1,16 @@
+com\fitnessapp\ShowAlarmPage$Alarm.class
+com\fitnessapp\CreateUserPage.class
+com\fitnessapp\LoadTheDataBase.class
+com\fitnessapp\database\DatabaseConnection.class
+com\fitnessapp\Main.class
+com\fitnessapp\Login.class
+com\fitnessapp\AddDiet.class
+com\fitnessapp\geminiConclude.class
+com\fitnessapp\SceneController$DietButton.class
+com\fitnessapp\ShowHomeInfo.class
+com\fitnessapp\LoadProfile.class
+com\fitnessapp\CalendarModel.class
+com\fitnessapp\AddWorkoutPage.class
 com\fitnessapp\SceneController.class
+com\fitnessapp\SceneController$WorkoutButton.class
+com\fitnessapp\ShowAlarmPage.class
