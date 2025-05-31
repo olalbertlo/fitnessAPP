@@ -22,7 +22,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import javafx.scene.image.ImageView;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
+import java.sql.ResultSet;
+import java.lang.StringBuilder;
 
 public class SceneController {
 
@@ -447,5 +450,90 @@ public class SceneController {
             showHomeInfo.initializeCalendar(calendarContainer);
         }
         loadHomePageData();
+    }
+
+    // add a done workout to the database
+    public void addDoneWorkoutToDatabase() {
+        String today = java.time.LocalDate.now().getDayOfWeek().toString().toUpperCase();
+        Connection conn = DatabaseConnection.getConnection();
+
+        try {
+            // get the workout ID for today's workout
+            String getWorkoutSql = "SELECT id, workout_text FROM workouts WHERE user_id = ? AND day_of_week = ?";
+            PreparedStatement getWorkoutStmt = conn.prepareStatement(getWorkoutSql);
+            getWorkoutStmt.setInt(1, currentUserId);
+            getWorkoutStmt.setString(2, today);
+            ResultSet rs = getWorkoutStmt.executeQuery();
+
+            if (rs.next()) {
+                int workoutId = rs.getInt("id");
+                String[] allWorkouts = rs.getString("workout_text").split("[\\n]+");
+                StringBuilder remainingWorkouts = new StringBuilder();
+                StringBuilder completedWorkouts = new StringBuilder();
+
+                // Get all checkboxes from dailyTasks
+                List<CheckBox> checkBoxes = dailyTasks.getChildren().stream()
+                        .filter(node -> node instanceof CheckBox)
+                        .map(node -> (CheckBox) node)
+                        .collect(java.util.stream.Collectors.toList());
+
+                // Separate completed and remaining workouts
+                for (String workout : allWorkouts) {
+                    final String workoutTrim = workout.trim();
+                    if (!workoutTrim.isEmpty()) {
+                        boolean isCompleted = checkBoxes.stream()
+                                .filter(cb -> cb.getText().equals(workoutTrim))
+                                .findFirst()
+                                .map(CheckBox::isSelected)
+                                .orElse(false);
+
+                        if (isCompleted) {
+                            completedWorkouts.append(workoutTrim).append("\n");
+                        } else {
+                            remainingWorkouts.append(workoutTrim).append("\n");
+                        }
+                    }
+                }
+
+                // Only proceed if there are completed workouts
+                if (completedWorkouts.length() > 0) {
+                    // Insert completed workouts into done_workouts table
+                    String insertDoneSql = "INSERT INTO done_workouts (user_id, workout_id, workout_text) VALUES (?, ?, ?)";
+                    PreparedStatement insertDoneStmt = conn.prepareStatement(insertDoneSql);
+                    insertDoneStmt.setInt(1, currentUserId);
+                    insertDoneStmt.setInt(2, workoutId);
+                    insertDoneStmt.setString(3, completedWorkouts.toString());
+                    insertDoneStmt.executeUpdate();
+
+                    // Update the original workout with remaining exercises
+                    if (remainingWorkouts.length() > 0) {
+                        String updateWorkoutSql = "UPDATE workouts SET workout_text = ? WHERE id = ? AND user_id = ?";
+                        PreparedStatement updateWorkoutStmt = conn.prepareStatement(updateWorkoutSql);
+                        updateWorkoutStmt.setString(1, remainingWorkouts.toString());
+                        updateWorkoutStmt.setInt(2, workoutId);
+                        updateWorkoutStmt.setInt(3, currentUserId);
+                        updateWorkoutStmt.executeUpdate();
+                    } else {
+                        // If all workouts are completed, delete the workout
+                        String deleteWorkoutSql = "DELETE FROM workouts WHERE id = ? AND user_id = ?";
+                        PreparedStatement deleteWorkoutStmt = conn.prepareStatement(deleteWorkoutSql);
+                        deleteWorkoutStmt.setInt(1, workoutId);
+                        deleteWorkoutStmt.setInt(2, currentUserId);
+                        deleteWorkoutStmt.executeUpdate();
+                    }
+
+                    // Refresh the display
+                    loadHomePageData();
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            javafx.scene.control.Alert alert = new javafx.scene.control.Alert(
+                    javafx.scene.control.Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("Database Error");
+            alert.setContentText("Failed to update workout status");
+            alert.showAndWait();
+        }
     }
 }

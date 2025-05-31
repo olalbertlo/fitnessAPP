@@ -33,7 +33,7 @@
             <Font size="14.0" />
          </font>
       </Button>
-      <ScrollPane layoutX="124.0" layoutY="455.0" prefHeight="222.0" prefWidth="847.0">
+      <ScrollPane layoutX="143.0" layoutY="455.0" prefHeight="222.0" prefWidth="718.0">
          <content>
             <GridPane fx:id="dailyTasks" prefHeight="40.0" prefWidth="400.0">
               <columnConstraints>
@@ -45,5 +45,6 @@
             </GridPane>
          </content>
       </ScrollPane>
+      <Button layoutX="884.0" layoutY="455.0" mnemonicParsing="false" onAction="#addDoneWorkoutToDatabase" prefHeight="39.0" prefWidth="74.0" text="OK" />
    </children>
 </Pane>

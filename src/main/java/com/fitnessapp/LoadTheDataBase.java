@@ -143,6 +143,31 @@ public class LoadTheDataBase {
 
                 // Store in SceneController's static storage
                 SceneController.storeWorkoutButton(dayOfWeek, workoutText, entry, button);
+
+                // Add to grid if needed
+                int dayIndex = switch (dayOfWeek) {
+                    case "MONDAY" -> 0;
+                    case "TUESDAY" -> 1;
+                    case "WEDNESDAY" -> 2;
+                    case "THURSDAY" -> 3;
+                    case "FRIDAY" -> 4;
+                    case "SATURDAY" -> 5;
+                    case "SUNDAY" -> 6;
+                    default -> -1;
+                };
+
+                if (dayIndex != -1 && SceneController.weekGrid[dayIndex] != null) {
+                    SceneController.weekGrid[dayIndex].add(button, 0, SceneController.weekGrid[dayIndex].getRowCount());
+                    javafx.scene.layout.RowConstraints rowConstraints = new javafx.scene.layout.RowConstraints();
+                    rowConstraints.setVgrow(javafx.scene.layout.Priority.ALWAYS);
+                    rowConstraints.setMinHeight(30); // Set minimum height
+                    rowConstraints.setFillHeight(true); // Allow the row to fill available height
+                    SceneController.weekGrid[dayIndex].getRowConstraints().add(rowConstraints);
+
+                    // Make the button fill its cell
+                    GridPane.setFillHeight(button, true);
+                    GridPane.setVgrow(button, javafx.scene.layout.Priority.ALWAYS);
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -157,7 +182,6 @@ public class LoadTheDataBase {
 
         // Get today's day of week in the correct format (uppercase)
         String today = LocalDate.now().getDayOfWeek().toString().toUpperCase();
-        System.out.println("Today is: " + today); // Debug print
 
         try {
             String sql = "SELECT workout_text, day_of_week FROM workouts WHERE user_id = ? AND day_of_week = ?";
