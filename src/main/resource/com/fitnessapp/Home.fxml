@@ -35,7 +35,7 @@
       </Button>
       <ScrollPane layoutX="124.0" layoutY="455.0" prefHeight="222.0" prefWidth="847.0">
          <content>
-            <GridPane fx:id="dailyTasks" prefHeight="220.0" prefWidth="840.0">
+            <GridPane fx:id="dailyTasks" prefHeight="40.0" prefWidth="400.0">
               <columnConstraints>
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
               </columnConstraints>

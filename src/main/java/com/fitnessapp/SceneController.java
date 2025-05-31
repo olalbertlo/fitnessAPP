@@ -125,6 +125,9 @@ public class SceneController {
     private LoadProfile loadProfile;
 
     @FXML
+    private GridPane dailyTasks;
+
+    @FXML
     public void initialize() {
         // Store this instance
         instance = this;
@@ -217,7 +220,9 @@ public class SceneController {
             // If loading the home scene, initialize the calendar
             if (scenePath.equals("/com/fitnessapp/Home.fxml")) {
                 if (newController != null && newController.calendarContainer != null) {
+                    newController.showHomeInfo = new ShowHomeInfo();
                     newController.showHomeInfo.initializeCalendar(newController.calendarContainer);
+                    newController.loadHomePageData();
                 }
             }
 
@@ -290,6 +295,17 @@ public class SceneController {
     // remove a workout button
     public static void removeWorkoutButton(Button button) {
         storedWorkoutButtons.removeIf(wb -> wb.button == button);
+    }
+
+    // Clear all workout buttons
+    public static void clearWorkoutButtons() {
+        storedWorkoutButtons.clear();
+        // Clear all workout grids
+        for (GridPane grid : weekGrid) {
+            if (grid != null) {
+                grid.getChildren().removeIf(node -> node instanceof Button);
+            }
+        }
     }
 
     // restore all workout buttons
@@ -413,14 +429,23 @@ public class SceneController {
         }
     }
 
-    public void initializeHomePageData() {
+    public void loadHomePageData() {
         if (calendarContainer != null) {
-            showHomeInfo = new ShowHomeInfo();
-            showHomeInfo.initializeCalendar(calendarContainer);
-
             LoadTheDataBase dataLoader = new LoadTheDataBase(currentUserId);
             dataLoader.setShowHomeInfo(showHomeInfo);
+            if (dailyTasks != null) {
+                dataLoader.setDailyTasks(dailyTasks);
+            }
             dataLoader.loadAllData();
         }
+    }
+
+    // Keep this for backward compatibility, but make it use the new method
+    public void initializeHomePageData() {
+        if (showHomeInfo == null) {
+            showHomeInfo = new ShowHomeInfo();
+            showHomeInfo.initializeCalendar(calendarContainer);
+        }
+        loadHomePageData();
     }
 }
