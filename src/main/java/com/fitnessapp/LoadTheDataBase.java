@@ -11,16 +11,19 @@ import java.time.LocalTime;
 import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
 
+
 public class LoadTheDataBase {
     private Connection conn;
     private int currentUserId;
     private ShowHomeInfo showHomeInfo;
+    private LoadProfile loadProfile;
 
     public LoadTheDataBase(int userId) {
         this.conn = DatabaseConnection.getConnection();
         this.currentUserId = userId;
     }
 
+    
     public void setShowHomeInfo(ShowHomeInfo showHomeInfo) {
         this.showHomeInfo = showHomeInfo;
     }

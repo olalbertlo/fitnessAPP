@@ -21,6 +21,8 @@ import com.fitnessapp.database.DatabaseConnection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import javafx.scene.image.ImageView;
+import javafx.scene.control.Label;
 
 public class SceneController {
 
@@ -110,12 +112,30 @@ public class SceneController {
     private int currentUserId;
 
     @FXML
+    private ImageView userImage;
+    @FXML
+    private Label userDisplayName;
+    @FXML
+    private Label userStatus;
+    @FXML
+    private Label userBMI;
+    @FXML
+    private Label userTarget;
+
+    private LoadProfile loadProfile;
+
+    @FXML
     public void initialize() {
         // Store this instance
         instance = this;
 
         // Initialize AddDiet after FXML components are loaded
         addDiet = new AddDiet(mealPane, weekPane, eat, weekDay);
+
+        // Initialize profile if we're on the profile page
+        if (userImage != null && userDisplayName != null) {
+            loadProfile = new LoadProfile(userImage, userDisplayName, userStatus, userBMI, userTarget);
+        }
 
         // Restore diet buttons if we're on the Diet page
         if (weekDay != null) {
@@ -185,7 +205,6 @@ public class SceneController {
                 break;
         }
         try {
-            // add the scenepath to the root
             FXMLLoader loader = new FXMLLoader(getClass().getResource(scenePath));
             root = loader.load();
 
@@ -193,7 +212,6 @@ public class SceneController {
             SceneController newController = loader.getController();
             if (newController != null) {
                 newController.setCurrentUserId(currentUserId);
-                System.out.println("Passing user ID to new scene: " + currentUserId); // Debug print
             }
 
             // If loading the home scene, initialize the calendar
@@ -216,6 +234,9 @@ public class SceneController {
         this.currentUserId = userId;
         if (addDiet != null) {
             addDiet.setCurrentUserId(userId);
+        }
+        if (loadProfile != null) {
+            loadProfile.setCurrentUserId(userId);
         }
     }
 
