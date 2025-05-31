@@ -141,11 +141,23 @@ public class DatabaseConnection {
                         )
                     """;
 
+            // Create remember_tokens table
+            String createRememberTokensTable = """
+                        CREATE TABLE IF NOT EXISTS remember_tokens (
+                            id INT AUTO_INCREMENT PRIMARY KEY,
+                            user_id INT NOT NULL,
+                            token VARCHAR(255) NOT NULL,
+                            expiry_date TIMESTAMP NOT NULL,
+                            FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+                        )
+                    """;
+
             // Execute the create table statements
             connection.createStatement().execute(createUsersTable);
             connection.createStatement().execute(createAlarmsTable);
             connection.createStatement().execute(createWorkoutsTable);
             connection.createStatement().execute(createDietsTable);
+            connection.createStatement().execute(createRememberTokensTable);
 
             System.out.println("Database tables initialized successfully!");
         } catch (SQLException e) {

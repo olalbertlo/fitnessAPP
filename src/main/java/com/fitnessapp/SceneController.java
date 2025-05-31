@@ -17,6 +17,10 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.control.TextArea;
 import com.calendarfx.model.Entry;
+import com.fitnessapp.database.DatabaseConnection;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 
 public class SceneController {
 
@@ -110,11 +114,6 @@ public class SceneController {
         // Store this instance
         instance = this;
 
-        if (calendarContainer != null) {
-            showHomeInfo = new ShowHomeInfo();
-            showHomeInfo.initializeCalendar(calendarContainer);
-        }
-
         // Initialize AddDiet after FXML components are loaded
         addDiet = new AddDiet(mealPane, weekPane, eat, weekDay);
 
@@ -182,7 +181,7 @@ public class SceneController {
                 scenePath = "/com/fitnessapp/Profile.fxml";
                 break;
             default:
-                scenePath = "/com/fitnessapp/Home.fxml";
+                scenePath = "/com/fitnessapp/Login.fxml";
                 break;
         }
         try {
@@ -360,6 +359,47 @@ public class SceneController {
             addDiet.initialize();
             addDiet.setCurrentUserId(currentUserId);
             addDiet.createMealButtons();
+        }
+    }
+
+    public void logOut(ActionEvent event) {
+        // Clear the token
+        Connection conn = DatabaseConnection.getConnection();
+        try {
+            PreparedStatement pstmt = conn.prepareStatement("DELETE FROM remember_tokens WHERE user_id = ?");
+            pstmt.setInt(1, currentUserId);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        // Clear all session data
+        currentUserId = 0;
+        storedWorkoutButtons.clear();
+        storedDietButtons.clear();
+        weekGrid = new javafx.scene.layout.GridPane[7];
+
+        // Switch to login page
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/fitnessapp/Login.fxml"));
+            Parent root = loader.load();
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            Scene scene = new Scene(root);
+            stage.setScene(scene);
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void initializeHomePageData() {
+        if (calendarContainer != null) {
+            showHomeInfo = new ShowHomeInfo();
+            showHomeInfo.initializeCalendar(calendarContainer);
+
+            LoadTheDataBase dataLoader = new LoadTheDataBase(currentUserId);
+            dataLoader.setShowHomeInfo(showHomeInfo);
+            dataLoader.loadAllData();
         }
     }
 }

@@ -24,7 +24,7 @@
       <Label alignment="CENTER_RIGHT" contentDisplay="CENTER" layoutX="341.0" layoutY="359.0" prefHeight="20.0" prefWidth="70.0" text="Account : " />
       <Label alignment="CENTER_RIGHT" layoutX="341.0" layoutY="402.0" prefHeight="20.0" prefWidth="70.0" text="Password : " />
       <PasswordField fx:id="passwordField" layoutX="418.0" layoutY="401.0" onAction="#onEnter" />
-      <Button alignment="CENTER" layoutX="452.0" layoutY="501.0" mnemonicParsing="false" onAction="#loginAction" text="Login" />
+      <Button alignment="CENTER" layoutX="452.0" layoutY="501.0" mnemonicParsing="false" onAction="#login" text="Login" />
       <CheckBox fx:id="rememberMe" layoutX="351.0" layoutY="444.0" mnemonicParsing="false" text="remember me" />
       <Hyperlink fx:id="createUser" layoutX="500.0" layoutY="442.0" onAction="#switchToCreateUser" text="Create User" />
    </children>

@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.chart.CategoryAxis?>
-<?import javafx.scene.chart.LineChart?>
-<?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.SplitPane?>
@@ -28,7 +25,7 @@
             <Font name="Microsoft YaHei Light" size="40.0" />
          </font>
       </Label>
-      <Button alignment="CENTER" layoutX="897.0" layoutY="14.0" mnemonicParsing="false" prefHeight="39.0" prefWidth="60.0" text="User">
+      <Button alignment="CENTER" layoutX="810.0" layoutY="14.0" mnemonicParsing="false" onAction="#logOut" prefHeight="39.0" prefWidth="74.0" text="Log out">
          <font>
             <Font size="14.0" />
          </font>
@@ -53,18 +50,7 @@
                   </Label>
                </children>
             </AnchorPane>
-          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="188.0" prefWidth="839.0">
-               <children>
-                  <LineChart layoutX="58.0" layoutY="5.0" prefHeight="407.0" prefWidth="734.0" title="Weekly workout">
-                    <xAxis>
-                      <CategoryAxis side="BOTTOM" />
-                    </xAxis>
-                    <yAxis>
-                      <NumberAxis side="LEFT" />
-                    </yAxis>
-                  </LineChart>
-               </children>
-            </AnchorPane>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="188.0" prefWidth="839.0" />
         </items>
       </SplitPane>
    </children>
