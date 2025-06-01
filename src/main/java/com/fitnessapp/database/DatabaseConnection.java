@@ -7,42 +7,55 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
 public class DatabaseConnection {
-    // Database credentials
-    private static final String DB_URL = "jdbc:mysql://localhost:3306/";
-    private static final String DB_NAME = "fitness_app";
-    private static final String USER = "root"; // Change this to your MySQL username
-    private static final String PASS = "Albert"; // Change this to your MySQL password
+    private static Connection conn = null;
 
-    private static Connection connection = null;
+    // Cloud database configuration
+    private static final String DB_HOST = "mysql-1fd2a996-fitness-database0604.k.aivencloud.com";
+    private static final String DB_PORT = "26464";
+    private static final String DB_NAME = "defaultdb";
+    private static final String USER = "avnadmin";
+    private static final String PASS = "AVNS_DxD3WWod-46MP_3mubZ";
 
-    // Get database connection
     public static Connection getConnection() {
-        if (connection == null) {
+        if (conn == null) {
             try {
-                // Register JDBC driver
+                // Load the MySQL JDBC driver
                 Class.forName("com.mysql.cj.jdbc.Driver");
 
-                // First, connect to MySQL server without selecting a database
-                Connection tempConnection = DriverManager.getConnection(DB_URL, USER, PASS);
+                // Construct the connection URL with SSL requirements
+                String url = String.format("jdbc:mysql://%s:%s/%s?sslMode=REQUIRED&user=%s&password=%s",
+                        DB_HOST, DB_PORT, DB_NAME, USER, PASS);
 
-                // Create database if it doesn't exist
-                String createDatabase = "CREATE DATABASE IF NOT EXISTS " + DB_NAME;
-                tempConnection.createStatement().executeUpdate(createDatabase);
-                tempConnection.close();
+                // Create the connection
+                conn = DriverManager.getConnection(url);
+                System.out.println("Database connected successfully");
 
-                // Now connect to the database
-                connection = DriverManager.getConnection(DB_URL + DB_NAME, USER, PASS);
-                // Initialize database tables if they don't exist
+                // Initialize tables after successful connection
                 initializeTables();
-            } catch (SQLException e) {
-                System.err.println("Database connection error: " + e.getMessage());
-                e.printStackTrace();
+
             } catch (ClassNotFoundException e) {
-                System.err.println("MySQL JDBC Driver not found: " + e.getMessage());
+                System.err.println("MySQL JDBC Driver not found.");
+                e.printStackTrace();
+            } catch (SQLException e) {
+                System.err.println("Connection to database failed!");
+                System.err.println("Error: " + e.getMessage());
                 e.printStackTrace();
             }
         }
-        return connection;
+        return conn;
+    }
+
+    public static void closeConnection() {
+        if (conn != null) {
+            try {
+                conn.close();
+                conn = null;
+                System.out.println("Database connection closed");
+            } catch (SQLException e) {
+                System.err.println("Error closing database connection!");
+                e.printStackTrace();
+            }
+        }
     }
 
     public static boolean userExists(String userId) {
@@ -57,19 +70,6 @@ public class DatabaseConnection {
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
-        }
-    }
-
-    // Close database connection
-    public static void closeConnection() {
-        if (connection != null) {
-            try {
-                connection.close();
-                connection = null;
-            } catch (SQLException e) {
-                System.err.println("Error closing database connection: " + e.getMessage());
-                e.printStackTrace();
-            }
         }
     }
 
@@ -162,12 +162,12 @@ public class DatabaseConnection {
                     """;
 
             // Execute the create table statements
-            connection.createStatement().execute(createUsersTable);
-            connection.createStatement().execute(createAlarmsTable);
-            connection.createStatement().execute(createWorkoutsTable);
-            connection.createStatement().execute(createDietsTable);
-            connection.createStatement().execute(createRememberTokensTable);
-            connection.createStatement().execute(createDoneWorkoutsTable);
+            conn.createStatement().execute(createUsersTable);
+            conn.createStatement().execute(createAlarmsTable);
+            conn.createStatement().execute(createWorkoutsTable);
+            conn.createStatement().execute(createDietsTable);
+            conn.createStatement().execute(createRememberTokensTable);
+            conn.createStatement().execute(createDoneWorkoutsTable);
         } catch (SQLException e) {
             System.err.println("Error initializing database tables: " + e.getMessage());
             e.printStackTrace();

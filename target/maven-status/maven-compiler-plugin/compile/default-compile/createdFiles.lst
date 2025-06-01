@@ -13,4 +13,5 @@ com\fitnessapp\CalendarModel.class
 com\fitnessapp\AddWorkoutPage.class
 com\fitnessapp\SceneController.class
 com\fitnessapp\SceneController$WorkoutButton.class
+com\fitnessapp\ChangeUserInfo.class
 com\fitnessapp\ShowAlarmPage.class
