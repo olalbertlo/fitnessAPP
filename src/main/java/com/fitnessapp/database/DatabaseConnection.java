@@ -5,29 +5,52 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.io.InputStream;
+import java.util.Properties;
+import java.io.IOException;
+import java.io.FileInputStream;
 
 public class DatabaseConnection {
     private static Connection conn = null;
+    private static Properties props = null;
 
-    // Cloud database configuration
-    private static final String DB_HOST = "mysql-1fd2a996-fitness-database0604.k.aivencloud.com";
-    private static final String DB_PORT = "26464";
-    private static final String DB_NAME = "defaultdb";
-    private static final String USER = "avnadmin";
-    private static final String PASS = "AVNS_DxD3WWod-46MP_3mubZ";
+    private static void loadProperties() {
+        if (props == null) {
+            props = new Properties();
+            try {
+                InputStream input = new FileInputStream("src/main/resources/application.properties");
+                props.load(input);
+                input.close();
+            } catch (IOException e) {
+                System.err.println("Error loading properties file: " + e.getMessage());
+                throw new RuntimeException("Failed to load application.properties", e);
+            }
+        }
+    }
 
     public static Connection getConnection() {
         if (conn == null) {
             try {
+                // Load properties first
+                loadProperties();
+
                 // Load the MySQL JDBC driver
                 Class.forName("com.mysql.cj.jdbc.Driver");
 
-                // Construct the connection URL with SSL requirements
-                String url = String.format("jdbc:mysql://%s:%s/%s?sslMode=REQUIRED&user=%s&password=%s",
-                        DB_HOST, DB_PORT, DB_NAME, USER, PASS);
+                // Get database properties
+                String host = props.getProperty("db.host");
+                String port = props.getProperty("db.port");
+                String dbName = props.getProperty("db.name");
+                String user = props.getProperty("db.user");
+                String password = props.getProperty("db.password");
+
+                // Construct the connection URL
+                String url = String.format(
+                        "jdbc:mysql://%s:%s/%s?sslMode=REQUIRED&allowPublicKeyRetrieval=true&useSSL=true",
+                        host, port, dbName);
 
                 // Create the connection
-                conn = DriverManager.getConnection(url);
+                conn = DriverManager.getConnection(url, user, password);
                 System.out.println("Database connected successfully");
 
                 // Initialize tables after successful connection
