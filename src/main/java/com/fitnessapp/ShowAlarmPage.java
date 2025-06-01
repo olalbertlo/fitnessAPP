@@ -6,7 +6,12 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.stage.Modality;
-import java.io.IOException;
+import java.io.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import com.fitnessapp.database.DatabaseConnection;
 import javafx.event.ActionEvent;
 import javafx.scene.control.Slider;
 import javafx.scene.control.ToggleGroup;
@@ -26,12 +31,14 @@ public class ShowAlarmPage {
     public static int gridRow = 0, gridColumn = 0;
 
     private static class Alarm {
+        int id;
         int hour, minute;
         String task;
         Button button;
         ScheduledExecutorService scheduler;
 
-        public Alarm(int hour, int minute, String task, Button button, ScheduledExecutorService scheduler) {
+        public Alarm(int id, int hour, int minute, String task, Button button, ScheduledExecutorService scheduler) {
+            this.id = id;
             this.hour = hour;
             this.minute = minute;
             this.task = task;
@@ -41,11 +48,165 @@ public class ShowAlarmPage {
     }
 
     private List<Alarm> alarms = new ArrayList<>();
+    private int currentUserId;
+
+    public void setCurrentUserId(int userId) {
+        this.currentUserId = userId;
+        // Reload alarms when user ID is set
+        // alarms are loaded when the user login (whenever the userId is set)
+        loadAlarms();
+    }
 
     @FXML
     public void initialize() {
         setupIntegerSlider(sliderForHour);
         setupIntegerSlider(sliderForMinute);
+    }
+
+    private void loadAlarms() {
+        // Clear existing alarms
+        alarms.forEach(alarm -> {
+            if (alarm.scheduler != null) {
+                alarm.scheduler.shutdown();
+            }
+        });
+        alarms.clear();
+
+        try {
+            Connection conn = DatabaseConnection.getConnection();
+            String sql = "SELECT * FROM alarms WHERE user_id = ?";
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt.setInt(1, currentUserId);
+            ResultSet rs = pstmt.executeQuery();
+
+            // get alarms details by user id
+            while (rs.next()) {
+                int id = rs.getInt("id");
+                int hour = rs.getInt("hour");
+                int minute = rs.getInt("minute");
+                String task = rs.getString("task");
+
+                // Create scheduler for each alarm
+                ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor(r -> {
+                    Thread thread = Executors.defaultThreadFactory().newThread(r);
+                    thread.setDaemon(true);
+                    return thread;
+                });
+
+                // Create button for the alarm
+                String labelText = String.format("AT %02d:%02d %s", hour, minute, task);
+                Button button = new Button(labelText);
+
+                // Click to remove alarm
+                button.setOnAction(event -> {
+                    Alarm alarmToRemove = alarms.stream()
+                            .filter(a -> a.id == id)
+                            .findFirst()
+                            .orElse(null);
+
+                    if (alarmToRemove != null) {
+                        deleteAlarm(alarmToRemove);
+                    }
+                });
+
+                // Create and add alarm
+                Alarm alarm = new Alarm(id, hour, minute, task, button, scheduler);
+                alarms.add(alarm);
+
+                // Schedule the alarm
+                scheduleAlarm(alarm);
+            }
+            refreshGrid();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // delete alarm from database and remove from list
+    private void deleteAlarm(Alarm alarm) {
+        try {
+            Connection conn = DatabaseConnection.getConnection();
+            String sql = "DELETE FROM alarms WHERE id = ? AND user_id = ?";
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt.setInt(1, alarm.id);
+            pstmt.setInt(2, currentUserId);
+            pstmt.executeUpdate();
+
+            alarm.scheduler.shutdown();
+            alarms.remove(alarm);
+            refreshGrid();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // save alarm to database
+    private void saveAlarm(int hour, int minute, String task) {
+        try {
+            Connection conn = DatabaseConnection.getConnection();
+            String sql = "INSERT INTO alarms (user_id, hour, minute, task) VALUES (?, ?, ?, ?)";
+            PreparedStatement pstmt = conn.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
+            pstmt.setInt(1, currentUserId);
+            pstmt.setInt(2, hour);
+            pstmt.setInt(3, minute);
+            pstmt.setString(4, task);
+            pstmt.executeUpdate();
+
+            // Get the generated ID
+            ResultSet rs = pstmt.getGeneratedKeys();
+            if (rs.next()) {
+                int id = rs.getInt(1);
+
+                // Create scheduler
+                ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor(r -> {
+                    Thread thread = Executors.defaultThreadFactory().newThread(r);
+                    thread.setDaemon(true);
+                    return thread;
+                });
+
+                // Create button
+                String labelText = String.format("AT %02d:%02d %s", hour, minute, task);
+                Button button = new Button(labelText);
+
+                // Add click handler
+                button.setOnAction(event -> {
+                    Alarm alarmToRemove = alarms.stream()
+                            .filter(a -> a.id == id)
+                            .findFirst()
+                            .orElse(null);
+
+                    if (alarmToRemove != null) {
+                        deleteAlarm(alarmToRemove);
+                    }
+                });
+
+                // Create and add alarm
+                Alarm alarm = new Alarm(id, hour, minute, task, button, scheduler);
+                alarms.add(alarm);
+                scheduleAlarm(alarm);
+                refreshGrid();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // schedule alarm, timeup then remove
+    private void scheduleAlarm(Alarm alarm) {
+        alarm.scheduler.scheduleAtFixedRate(() -> {
+            LocalTime currentTime = LocalTime.now();
+            if (currentTime.getHour() == alarm.hour && currentTime.getMinute() == alarm.minute) {
+                try {
+                    displayTray();
+                } catch (AWTException e) {
+                    e.printStackTrace();
+                }
+
+                javafx.application.Platform.runLater(() -> {
+                    deleteAlarm(alarm);
+                });
+            }
+        }, 0, 10, TimeUnit.SECONDS);
     }
 
     // set the slider moves in integer
@@ -83,15 +244,8 @@ public class ShowAlarmPage {
     private GridPane yetTriggerAlarm;
 
     public void addAlarm(ActionEvent event) {
-
-        // each click create a new scheduler on a new thread
-        ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor(r -> {
-            Thread thread = Executors.defaultThreadFactory().newThread(r);
-            thread.setDaemon(true);
-            return thread;
-        });
-
-        int hour = (int) sliderForHour.getValue(), minute = (int) sliderForMinute.getValue();
+        int hour = (int) sliderForHour.getValue();
+        int minute = (int) sliderForMinute.getValue();
 
         String task;
         if (toEat.isSelected())
@@ -101,32 +255,7 @@ public class ShowAlarmPage {
         else
             task = "Do Something";
 
-        // add the alarm to the grid
-        String labelText = String.format("AT %02d:%02d %s", hour, minute, task);
-        Button button = new Button(labelText);
-
-        Alarm alarm = new Alarm(hour, minute, task, button, scheduler);
-        alarms.add(alarm);
-        refreshGrid();
-
-        // use scheduler to detect if the alarm need to be triggered
-        scheduler.scheduleAtFixedRate(() -> {
-            LocalTime currentTime = LocalTime.now();
-            if (currentTime.getHour() == hour && currentTime.getMinute() == minute) {
-                try {
-                    displayTray();
-                } catch (AWTException e) {
-                    e.printStackTrace();
-                }
-
-                // remove the alarmbutton if the alarm is triggered
-                javafx.application.Platform.runLater(() -> {
-                    alarms.remove(alarm);
-                    refreshGrid();
-                });
-                scheduler.shutdown();
-            }
-        }, 0, 10, TimeUnit.SECONDS);
+        saveAlarm(hour, minute, task);
     }
 
     public void refreshGrid() {
