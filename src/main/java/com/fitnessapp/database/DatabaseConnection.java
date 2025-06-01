@@ -32,8 +32,6 @@ public class DatabaseConnection {
 
                 // Now connect to the database
                 connection = DriverManager.getConnection(DB_URL + DB_NAME, USER, PASS);
-                System.out.println("Database connection established successfully!");
-
                 // Initialize database tables if they don't exist
                 initializeTables();
             } catch (SQLException e) {
@@ -68,7 +66,6 @@ public class DatabaseConnection {
             try {
                 connection.close();
                 connection = null;
-                System.out.println("Database connection closed successfully!");
             } catch (SQLException e) {
                 System.err.println("Error closing database connection: " + e.getMessage());
                 e.printStackTrace();
@@ -171,8 +168,6 @@ public class DatabaseConnection {
             connection.createStatement().execute(createDietsTable);
             connection.createStatement().execute(createRememberTokensTable);
             connection.createStatement().execute(createDoneWorkoutsTable);
-
-            System.out.println("Database tables initialized successfully!");
         } catch (SQLException e) {
             System.err.println("Error initializing database tables: " + e.getMessage());
             e.printStackTrace();

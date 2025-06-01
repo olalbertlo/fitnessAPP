@@ -82,10 +82,8 @@ public class ChangeUserInfo {
                 Height.setText(rs.getDouble("height") > 0 ? String.valueOf(rs.getDouble("height")) : "");
                 Weight.setText(rs.getDouble("weight") > 0 ? String.valueOf(rs.getDouble("weight")) : "");
                 age.setText(rs.getInt("age") > 0 ? String.valueOf(rs.getInt("age")) : "");
-
                 // Set gender
                 String gender = rs.getString("gender");
-                System.out.println("Loading gender from DB: " + gender);
 
                 if (gender != null) {
                     if (gender.equals("Male")) {
@@ -144,7 +142,6 @@ public class ChangeUserInfo {
             // Get selected gender
             RadioButton selectedGender = (RadioButton) Gender.getSelectedToggle();
             String genderValue = selectedGender != null ? selectedGender.getText() : null;
-            System.out.println("Gender value to be saved: " + genderValue);
 
             // Convert Height and weight to decimal
             Double HeightValue = !Height.getText().isEmpty() ? Double.parseDouble(Height.getText()) : null;

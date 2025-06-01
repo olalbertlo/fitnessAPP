@@ -207,7 +207,6 @@ public class LoadTheDataBase {
                         CheckBox checkBox = new CheckBox(movement);
                         checkBox.setStyle("-fx-text-fill: black;");
                         dailyTasks.add(checkBox, 0, rowIndex++);
-                        System.out.println("Added checkbox for: " + movement); // Debug print
                     }
                 }
             }

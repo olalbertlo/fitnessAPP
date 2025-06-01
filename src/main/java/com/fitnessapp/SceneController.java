@@ -285,7 +285,6 @@ public class SceneController {
 
             ShowAlarmPage showAlarmPage = loader.getController();
             showAlarmPage.setCurrentUserId(currentUserId);
-            System.out.println("Passing user ID to alarm page: " + currentUserId); // Debug print
 
             Stage stage = new Stage();
             stage.initModality(Modality.APPLICATION_MODAL);
