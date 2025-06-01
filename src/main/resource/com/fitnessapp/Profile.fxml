@@ -64,5 +64,6 @@
                </children></AnchorPane>
         </items>
       </SplitPane>
+      <ImageView fx:id="changeProfile" fitHeight="60.0" fitWidth="60.0" layoutX="897.0" layoutY="4.0" onMouseClicked="#changeProfileInfo" pickOnBounds="true" preserveRatio="true" />
    </children>
 </Pane>

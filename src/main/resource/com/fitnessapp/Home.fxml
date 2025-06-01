@@ -3,6 +3,7 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
@@ -46,5 +47,6 @@
          </content>
       </ScrollPane>
       <Button layoutX="884.0" layoutY="455.0" mnemonicParsing="false" onAction="#addDoneWorkoutToDatabase" prefHeight="39.0" prefWidth="74.0" text="OK" />
+      <ImageView fx:id="changeProfile" fitHeight="60.0" fitWidth="60.0" layoutX="897.0" layoutY="4.0" onMouseClicked="#changeProfileInfo" pickOnBounds="true" preserveRatio="true" />
    </children>
 </Pane>

@@ -133,6 +133,9 @@ public class SceneController {
     private GridPane dailyTasks;
 
     @FXML
+    private ImageView changeProfile;
+
+    @FXML
     public void initialize() {
         // Store this instance
         instance = this;
@@ -144,6 +147,11 @@ public class SceneController {
         if (userImage != null && userDisplayName != null) {
             loadProfile = new LoadProfile(userImage, userDisplayName, userStatus, userBMI, userTarget,
                     adviceFromGemini);
+        }
+
+        // Load profile image for changeProfile button if it exists
+        if (changeProfile != null) {
+            loadProfileImage();
         }
 
         // Restore diet buttons if we're on the Diet page
@@ -171,24 +179,34 @@ public class SceneController {
             weekGrid[5] = instance.Saturday;
             weekGrid[6] = instance.Sunday;
 
-            // Restore any stored workout buttons in initialize
-            // Cause initialize is called every time the scene is loaded
-            restoreWorkoutButtons();
+            // Initialize grid properties
+            initializeWorkoutGrids();
 
-            // Only initialize grid properties if not done before
-            if (!gridsInitialized) {
-                initializeWorkoutGrids();
-                gridsInitialized = true;
-            }
+            // Restore any stored workout buttons
+            restoreWorkoutButtons();
         }
     }
 
     private void initializeWorkoutGrids() {
         for (javafx.scene.layout.GridPane grid : weekGrid) {
             if (grid != null) {
+                // Set grid properties
                 grid.setHgap(10);
                 grid.setVgap(10);
                 grid.setPadding(new javafx.geometry.Insets(10));
+
+                // Set growth properties
+                grid.setGridLinesVisible(false);
+                grid.setMaxHeight(Double.MAX_VALUE);
+                grid.setMaxWidth(Double.MAX_VALUE);
+                javafx.scene.layout.GridPane.setVgrow(grid, javafx.scene.layout.Priority.ALWAYS);
+                javafx.scene.layout.GridPane.setHgrow(grid, javafx.scene.layout.Priority.ALWAYS);
+
+                // Add column constraints
+                javafx.scene.layout.ColumnConstraints col = new javafx.scene.layout.ColumnConstraints();
+                col.setHgrow(javafx.scene.layout.Priority.ALWAYS);
+                col.setFillWidth(true);
+                grid.getColumnConstraints().add(col);
             }
         }
     }
@@ -248,6 +266,10 @@ public class SceneController {
         }
         if (loadProfile != null) {
             loadProfile.setCurrentUserId(userId);
+        }
+        // Load profile image whenever user ID is set
+        if (changeProfile != null) {
+            loadProfileImage();
         }
     }
 
@@ -319,6 +341,7 @@ public class SceneController {
         for (WorkoutButton wb : storedWorkoutButtons) {
             Button button = wb.button;
             button.setMaxWidth(Double.MAX_VALUE);
+            button.setMaxHeight(Double.MAX_VALUE);
             button.setStyle("-fx-background-color: #230850; -fx-text-fill: white; -fx-font-size: 12px;");
 
             int dayIndex = switch (wb.day) {
@@ -336,7 +359,15 @@ public class SceneController {
                 weekGrid[dayIndex].add(button, 0, weekGrid[dayIndex].getRowCount());
                 javafx.scene.layout.RowConstraints rowConstraints = new javafx.scene.layout.RowConstraints();
                 rowConstraints.setPrefHeight(60);
+                rowConstraints.setVgrow(javafx.scene.layout.Priority.ALWAYS);
+                rowConstraints.setFillHeight(true);
                 weekGrid[dayIndex].getRowConstraints().add(rowConstraints);
+
+                // Set growth properties for the button
+                GridPane.setFillWidth(button, true);
+                GridPane.setFillHeight(button, true);
+                GridPane.setVgrow(button, javafx.scene.layout.Priority.ALWAYS);
+                GridPane.setHgrow(button, javafx.scene.layout.Priority.ALWAYS);
             }
         }
     }
@@ -605,6 +636,60 @@ public class SceneController {
             alert.setHeaderText("Database Error");
             alert.setContentText("Failed to update workout status: " + e.getMessage());
             alert.showAndWait();
+        }
+    }
+
+    private void loadProfileImage() {
+        if (currentUserId <= 0) {
+            return;
+        }
+
+        Connection conn = DatabaseConnection.getConnection();
+        String sql = "SELECT profile_image FROM users WHERE id = ?";
+
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, currentUserId);
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                byte[] imageData = rs.getBytes("profile_image");
+                if (imageData != null && imageData.length > 0) {
+                    javafx.scene.image.Image image = new javafx.scene.image.Image(
+                            new java.io.ByteArrayInputStream(imageData));
+                    changeProfile.setImage(image);
+                    changeProfile.setFitHeight(100);
+                    changeProfile.setFitWidth(100);
+                    changeProfile.setPreserveRatio(true);
+                    // Make it circular
+                    javafx.scene.shape.Circle clip = new javafx.scene.shape.Circle(35, 30, 25);
+                    changeProfile.setClip(clip);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.err.println("Error loading profile image: " + e.getMessage());
+        }
+    }
+
+    public void changeProfileInfo(javafx.scene.input.MouseEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/fitnessapp/ChangeProfile.fxml"));
+            Parent root = loader.load();
+
+            // Get the controller and set the user ID
+            ChangeUserInfo controller = loader.getController();
+            controller.setCurrentUserId(currentUserId);
+
+            Stage stage = new Stage();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setTitle("Change Profile");
+            stage.setScene(new Scene(root));
+            stage.showAndWait();
+
+            // Refresh the profile image after update
+            loadProfileImage();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }
