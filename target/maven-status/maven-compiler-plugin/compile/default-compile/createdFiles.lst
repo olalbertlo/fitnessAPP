@@ -9,6 +9,7 @@ com\fitnessapp\geminiConclude.class
 com\fitnessapp\SceneController$DietButton.class
 com\fitnessapp\ShowHomeInfo.class
 com\fitnessapp\LoadProfile.class
+com\fitnessapp\App.class
 com\fitnessapp\CalendarModel.class
 com\fitnessapp\AddWorkoutPage.class
 com\fitnessapp\SceneController.class
